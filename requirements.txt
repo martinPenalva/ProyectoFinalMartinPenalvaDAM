@@ -1,0 +1,23 @@
+# Gestor de Eventos Locales - Dependencias
+
+# Base de datos
+mysql-connector-python>=8.0.33
+# Alternativa: SQLAlchemy>=2.0.0
+
+# Interfaz gráfica
+# Tkinter viene incluido con Python, no necesita instalación
+# Alternativa: PyQt5>=5.15.0 o PyQt6
+
+# Exportación de datos
+pandas>=2.0.0
+reportlab>=4.0.0
+# Alternativa: FPDF2>=2.7.0
+
+# Utilidades
+python-dotenv>=1.0.0  # Para variables de entorno
+bcrypt>=4.0.0  # Para hash de contraseñas (si se implementa autenticación)
+
+# Testing (opcional)
+pytest>=7.4.0
+pytest-mock>=3.11.0
+

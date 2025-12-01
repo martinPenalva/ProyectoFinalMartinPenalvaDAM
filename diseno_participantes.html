@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diseño - Participantes</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      background-color: #f4f6f9;
+      color: #222;
+    }
+    .header {
+      background: #1f4e79;
+      color: white;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      height: calc(100vh - 56px);
+    }
+    .sidebar {
+      background: #243447;
+      color: #e0e6f0;
+      padding: 16px 12px;
+    }
+    .menu-item {
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+    .menu-item.active {
+      background: #1f4e79;
+      font-weight: 600;
+    }
+    .content {
+      padding: 24px 32px;
+      overflow: auto;
+    }
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .content-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1f2933;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      cursor: default;
+    }
+    .btn-primary {
+      background: #1f4e79;
+      color: white;
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .input {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 0.9rem;
+      min-width: 250px;
+      background: white;
+    }
+    .table-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    th {
+      background: #f9fafb;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+    }
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+    .actions-col button {
+      margin-right: 4px;
+      border: none;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      background: #e5e7eb;
+      cursor: default;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e0f2fe;
+      color: #075985;
+    }
+    .modal-backdrop {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .modal {
+      width: 520px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 12px 18px;
+      background: #1f4e79;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .modal-body {
+      padding: 14px 18px 4px;
+      font-size: 0.9rem;
+    }
+    .modal-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .modal-label {
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+    .modal-input, .modal-select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 0.9rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .modal-footer {
+      padding: 10px 18px 14px;
+      text-align: right;
+      background: #f9fafb;
+    }
+    .modal-btn {
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 0.9rem;
+      margin-left: 6px;
+      cursor: default;
+    }
+    .modal-btn-primary {
+      background: #1f4e79;
+      color: white;
+    }
+    .modal-btn-secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+    /* Modal secundario inscripciones */
+    .modal-small {
+      width: 450px;
+      margin-left: 24px;
+    }
+    .modal-small table {
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">Gestor de Eventos Locales</div>
+    <div>Usuario: Admin</div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="menu-item">Inicio</div>
+      <div class="menu-item">Eventos</div>
+      <div class="menu-item active">Participantes</div>
+      <div class="menu-item">Inscripciones</div>
+      <div class="menu-item">Reportes</div>
+      <div class="menu-item">Usuarios</div>
+    </aside>
+
+    <main class="content">
+      <div class="content-header">
+        <div class="content-title">Participantes</div>
+        <div class="actions">
+          <button class="btn btn-primary">+ Nuevo participante</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <input class="input" placeholder="Buscar por nombre, apellidos o email" />
+      </div>
+
+      <section class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellidos</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>DNI / Identificador</th>
+              <th># Eventos</th>
+              <th style="width: 220px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ana</td>
+              <td>López García</td>
+              <td>ana@example.com</td>
+              <td>600 000 000</td>
+              <td>12345678A</td>
+              <td><span class="badge">3 eventos</span></td>
+              <td class="actions-col">
+                <button>Ver</button>
+                <button>Editar</button>
+                <button>Eliminar</button>
+                <button>Inscripciones</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Juan</td>
+              <td>Pérez Ruiz</td>
+              <td>juan@example.com</td>
+              <td>611 111 111</td>
+              <td>98765432B</td>
+              <td><span class="badge">1 evento</span></td>
+              <td class="actions-col">
+                <button>Ver</button>
+                <button>Editar</button>
+                <button>Eliminar</button>
+                <button>Inscripciones</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="modal-backdrop">
+        <div class="modal">
+          <div class="modal-header">Nuevo / Editar participante</div>
+          <div class="modal-body">
+            <div class="modal-row">
+              <div class="modal-label">Nombre *</div>
+              <input class="modal-input" />
+            </div>
+            <div class="modal-row">
+              <div class="modal-label">Apellidos *</div>
+              <input class="modal-input" />
+            </div>
+            <div class="modal-row">
+              <div class="modal-label">Email *</div>
+              <input class="modal-input" />
+            </div>
+            <div class="modal-row">
+              <div class="modal-label">Teléfono</div>
+              <input class="modal-input" />
+            </div>
+            <div class="modal-row">
+              <div class="modal-label">DNI / Identificador</div>
+              <input class="modal-input" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary">Cancelar</button>
+            <button class="modal-btn modal-btn-primary">Guardar</button>
+          </div>
+        </div>
+
+        <div class="modal modal-small">
+          <div class="modal-header">Inscripciones de Ana López García</div>
+          <div class="modal-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Evento</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Jornada de Innovación Local</td>
+                  <td>10/03/2025 10:00</td>
+                  <td>Inscrito</td>
+                </tr>
+                <tr>
+                  <td>Taller de Python</td>
+                  <td>12/03/2025 17:00</td>
+                  <td>Inscrito</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary">Agregar a evento</button>
+            <button class="modal-btn modal-btn-primary">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+
+
+
+

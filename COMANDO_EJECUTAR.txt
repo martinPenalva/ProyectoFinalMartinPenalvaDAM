@@ -1,0 +1,6 @@
+COMANDO PARA EJECUTAR LA APLICACIÓN:
+
+C:\Users\d508363\AppData\Local\Programs\Python\Python314\python.exe src\main.py
+
+O simplemente haz doble clic en: ejecutar.bat
+

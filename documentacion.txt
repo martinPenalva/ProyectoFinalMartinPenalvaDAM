@@ -1,0 +1,473 @@
+Memoria del Proyecto: Gestor de Eventos Locales con Python, Interfaz Gráfica y MySQL
+1. Portada 
+Nombre: Martin Peñalva Artázcoz
+Ciclo y curso: 2º DAM
+Título del proyecto: Gestor de Eventos Locales con Python, Interfaz Gráfica y Base de Datos MySQL
+
+
+
+2. Índice 
+Memoria del Proyecto: Gestor de Eventos Locales con Python, Interfaz Gráfica y MySQL	1
+1. Portada	1
+2. Índice	2
+3. Descripción inicial de la aplicación	3
+4. Justificación del proyecto	3
+Problema que soluciona	3
+Cómo lo soluciona esta aplicación	4
+5. Objetivos del proyecto	4
+Objetivo general	4
+Objetivos específicos	4
+6. Resultados esperados	4
+7. Beneficios	5
+8. Recursos hardware y software	5
+Hardware	5
+Software	5
+Materiales didácticos	6
+9. Fases del desarrollo	6
+9.1 Fase de análisis	6
+Listado de funcionalidades	6
+Priorización	7
+Requisitos técnicos	7
+Requisitos de usuario	7
+9.2 Fase de diseño	7
+Diagrama Relacional	7
+Entidades de la base de datos	8
+Atributos de las entidades	8
+Relaciones	9
+Diagramas de casos de uso	10
+Mockups:	10
+Guía de estilos y temas:	13
+9.3 Fase de desarrollo – COMENZANDO	13
+9.4 Fase de pruebas – PENDIENTE	14
+9.5 Fase de lanzamiento – PENDIENTE	14
+10. Conclusiones – PENDIENTE	14
+11. Bibliografía y referencias	14
+
+
+
+
+
+3. Descripción inicial de la aplicación 
+La aplicación será un gestor de eventos locales, que permitirá administrar eventos y los participantes asociados mediante una interfaz gráfica interactiva, desarrollada con Tkinter o PyQt.
+El sistema permitirá:
+Crear, modificar y eliminar eventos.
+
+
+Registrar participantes y asignarlos a uno o varios eventos.
+
+
+Buscar, filtrar y consultar información relevante en tiempo real.
+
+
+Exportar datos en formatos CSV y PDF.
+
+
+Garantizar la integridad de los datos mediante mecanismos de concurrencia, permitiendo varios usuarios conectados simultáneamente.
+
+
+El almacenamiento se realizará en una base de datos MySQL, diseñada para ser clara, escalable y mantenible.
+
+4. Justificación del proyecto 
+Problema que soluciona
+Muchas organizaciones locales gestionan sus eventos utilizando métodos manuales o herramientas dispersas, lo que provoca:
+Duplicidad de información.
+
+
+Errores frecuentes.
+
+
+Dificultad para coordinar participantes.
+
+
+Falta de informes automáticos.
+
+
+Problemas cuando varias personas trabajan simultáneamente.
+
+
+
+
+
+Cómo lo soluciona esta aplicación
+El proyecto centraliza toda la información en una base de datos MySQL, permite el acceso simultáneo de varios usuarios y genera informes PDF/CSV de manera automática, reduciendo errores y agilizando la gestión.
+
+
+
+
+
+5. Objetivos del proyecto 
+Objetivo general
+Desarrollar una aplicación de escritorio completa que permita gestionar eventos y participantes de forma centralizada, eficiente y multiusuario.
+Objetivos específicos
+Implementar CRUD de eventos.
+
+
+Implementar CRUD de participantes.
+
+
+Permitir asignación de participantes a eventos.
+
+
+Gestionar la concurrencia evitando conflictos de acceso simultáneo.
+
+
+Implementar exportación de datos en CSV y PDF.
+
+
+Desarrollar una interfaz gráfica clara e intuitiva.
+
+
+Conectar Python con MySQL usando mysql-connector o SQLAlchemy.
+
+
+
+
+6. Resultados esperados 
+Aplicación funcional y usable por personal no técnico.
+
+
+Base de datos MySQL estructurada, con integridad referencial.
+
+
+Sistema capaz de manejar correctamente varios usuarios a la vez.
+
+
+Interfaz gráfica estable y responsiva.
+
+
+Exportación de reportes fiable y rápida.
+
+
+Código organizado y documentado, apto para mantenimiento futuro.
+
+
+
+7. Beneficios 
+Eliminación de duplicidad y errores manuales.
+
+
+Agiliza la gestión completa de eventos y participantes.
+
+
+Permite trabajo colaborativo en tiempo real.
+
+
+Mejora la organización de actividades locales.
+
+
+Facilita la generación de informes y estadísticas.
+
+
+Permite que el sistema escale con nuevos eventos/usuarios sin complicaciones.
+
+
+
+8. Recursos hardware y software 
+Hardware
+Ordenador con Windows
+
+
+Teclado y ratón
+
+
+Monitor para la interfaz gráfica
+
+
+Software
+Python 3.x
+
+
+Visual Studio Code
+
+
+MySQL Server
+
+
+Librerías Python:
+
+
+Tkinter o PyQt
+mysql-connector-python o SQLAlchemy
+Pandas o módulo CSV
+ReportLab o FPDF
+threading / multiprocessing / queue
+
+
+Materiales didácticos
+Documentación oficial Python
+Manual MySQL
+Tutoriales GUI (Tkinter o PyQt)
+Recursos sobre concurrencia y sincronización
+
+
+9. Fases del desarrollo
+9.1 Fase de análisis 
+Listado de funcionalidades
+Crear, modificar y eliminar eventos.
+
+
+Registrar, modificar y eliminar participantes.
+
+
+Asignar participantes a eventos.
+
+
+Buscar eventos y participantes con filtros.
+
+
+Exportar datos a CSV y PDF.
+
+
+Manejar accesos simultáneos.
+
+
+Interfaz gráfica completa.
+
+
+
+
+Priorización
+Alta: CRUD, conexión con MySQL, interfaz gráfica, concurrencia.
+Media: exportación de datos, filtros avanzados.
+Baja: diseño estético avanzado, funciones adicionales opcionales.
+Requisitos técnicos
+Python + MySQL.
+Control de transacciones y bloqueos.
+GUI estable.
+Integridad referencial en la base de datos.
+9.2 Fase de diseño 
+
+Diagrama Relacional
+
+
+
+
+
+
+
+
+
+
+Entidades de la base de datos
+Tabla
+Propósito
+events
+Almacena información de cada evento.
+participants
+Almacena datos personales de los asistentes.
+event_registrations
+Relación N:M entre eventos y participantes (inscripciones).
+users
+Gestión de usuarios de la aplicación (login, roles).
+audit_logs 
+Registro de acciones de los usuarios para auditoría.
+
+
+Atributos de las entidades
+events (Eventos)
+event_id : int (PK)
+title : varchar(255) NOT NULL
+description : text
+location : varchar(255)
+start_datetime : datetime NOT NULL
+end_datetime : datetime NOT NULL
+capacity : int NOT NULL
+status : varchar(50) NOT NULL
+version : int NOT NULL (control de concurrencia)
+
+
+
+participants (Participantes)
+participant_id : int (PK)
+first_name : varchar(100) NOT NULL
+last_name : varchar(100) NOT NULL
+email : varchar(255) NOT NULL
+phone : int
+identifier : varchar(50) NOT NULL (DNI/NIE)
+
+
+
+
+event_registrations (Inscripciones)
+registration_id : int (PK)
+event_id : int (FK → events)
+participant_id : int (FK → participants)
+registered_at : datetime NOT NULL
+status : varchar(50) NOT NULL
+
+
+
+users (Usuarios)
+user_id : int (PK)
+username : varchar(50) NOT NULL
+password_hash : varchar(255) NOT NULL
+role : varchar(50) NOT NULL
+created_at : datetime NOT NULL
+
+
+
+audit_logs (En principio)
+log_id : int (PK)
+user_id : int (FK → users)
+action : varchar(100) NOT NULL
+entity : varchar(100) NOT NULL
+entity_id : int NOT NULL
+details : text
+timestamp : datetime NOT NULL
+
+
+
+Relaciones
+Un evento puede tener muchas inscripciones.
+Un participante puede inscribirse en muchos eventos.
+Relación M:N resuelta mediante event_registrations.
+users y audit_logs permiten rastrear acciones de manera opcional.
+
+
+
+
+
+Diagramas de casos de uso
+Descripción: Los diagramas muestran la interacción entre los actores (usuarios) y el sistema.
+
+Actores principales:
+Administrador: Gestiona eventos, participantes, usuarios y auditoría.
+Usuario normal: Consulta eventos, se inscribe y exporta reportes.
+
+
+Casos de uso principales:
+Gestionar eventos (crear, modificar, eliminar)
+
+
+Gestionar participantes (crear, modificar, eliminar)
+
+
+Asignar participantes a eventos
+
+
+Buscar y filtrar eventos/participantes
+
+
+Exportar reportes CSV/PDF
+
+
+Gestión de usuarios (solo admin)
+
+
+Registro de auditoría (posible)
+
+
+Acceso concurrente
+
+
+
+Mockups:
+Menú lateral con iconos y títulos
+
+
+Tablas para listar eventos/participantes con botones CRUD
+
+
+Botones de exportación CSV/PDF en la parte superior o inferior
+
+
+Formularios claros con campos obligatorios marcados
+
+
+
+Diseño login:
+
+
+Diseño de la página una vez iniciado sesión:
+
+
+
+
+
+
+
+
+
+Diseño eventos: 
+
+
+
+Diseño participantes: 
+
+
+
+Guía de estilos y temas:
+Colores: Tonos neutros con un color principal para acciones importantes.
+
+
+Tipografía: Fuente clara y legible, tamaño mínimo 11 pt.
+
+
+Botones y controles: Consistentes en todo el sistema, con feedback visual al hacer clic.
+
+
+Mensajes de error y validación: Claros y visibles cerca del campo correspondiente.
+
+9.3 Fase de desarrollo – COMENZANDO
+Partes complejas:
+Gestión de concurrencia
+
+
+Conexión a MySQL
+
+
+Exportación PDF y CSV
+
+
+Control de transacciones
+
+
+Interfaz gráfica estable
+
+
+Repositorio: Pendiente
+Código inicial: En proceso
+
+9.4 Fase de pruebas – PENDIENTE
+Pruebas unitarias de CRUD.
+
+
+Pruebas de concurrencia con accesos simultáneos.
+
+
+Pruebas de exportación.
+
+
+Validación con datos reales simulados.
+
+
+
+
+
+9.5 Fase de lanzamiento – PENDIENTE
+Instalador básico o carpeta portable.
+
+
+Manual de usuario.
+
+
+Corrección de errores.
+
+
+Mejoras planificadas.
+
+
+
+10. Conclusiones – PENDIENTE
+(Se redactará cuando finalice el proyecto)
+11. Bibliografía y referencias
+Documentación oficial de Python: https://docs.python.org/3/
+Documentación oficial de MySQL: https://dev.mysql.com/doc/
+Recursos sobre Tkinter / PyQt (tutoriales y guías de referencia).
+Documentación de SQLAlchemy:  https://docs.sqlalchemy.org/
+Documentación de mysql-connector-python (MySQL Connector/Python Developer Guide).
+Tutoriales y documentación de ReportLab y/o FPDF para generación de PDF.
+Artículos y documentación sobre concurrencia en Python (módulos threading, multiprocessing, asyncio, etc.)
+
+
+
