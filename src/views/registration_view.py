@@ -21,12 +21,19 @@ from src.controllers.participant_controller import ParticipantController
 class RegistrationView:
     """Vista completa de gestión de inscripciones"""
     
-    def __init__(self, parent, registration_controller, event_controller, participant_controller, is_admin=False):
+    def __init__(self, parent, registration_controller, event_controller, participant_controller, is_admin=False, username=None):
         self.parent = parent
         self.registration_controller = registration_controller
         self.event_controller = event_controller
         self.participant_controller = participant_controller
         self.is_admin = is_admin
+        self.username = username  # Username del usuario actual
+        
+        # Buscar el participante asociado al usuario
+        self.user_participant = None
+        if not is_admin and username and participant_controller:
+            # Buscar el participante asociado al username usando múltiples estrategias
+            self.user_participant = participant_controller.find_by_username(username)
         
         self.create_widgets()
         self.load_data()
@@ -46,9 +53,14 @@ class RegistrationView:
         )
         title.pack(anchor=tk.W)
         
+        if self.is_admin:
+            subtitle_text = "Asigna participantes a eventos y gestiona sus inscripciones."
+        else:
+            subtitle_text = "Gestiona tus inscripciones en eventos."
+        
         subtitle = tk.Label(
             title_frame,
-            text="Asigna participantes a eventos y gestiona sus inscripciones.",
+            text=subtitle_text,
             font=("Arial", 10),
             bg=COLORS['background'],
             fg=COLORS['text_secondary']
@@ -59,29 +71,46 @@ class RegistrationView:
         toolbar = tk.Frame(self.parent, bg=COLORS['background'])
         toolbar.pack(fill=tk.X, pady=(0, 16))
         
-        btn_new = tk.Button(
-            toolbar,
-            text="➕ Nueva Inscripción",
-            font=("Arial", 10, "bold"),
-            bg=COLORS['primary'],
-            fg="white",
-            relief=tk.FLAT,
-            cursor="hand2",
-            padx=16,
-            pady=8,
-            command=self.show_new_registration_modal,
-            state=tk.NORMAL if self.is_admin else tk.DISABLED
-        )
-        btn_new.pack(side=tk.LEFT)
-        if not self.is_admin:
-            info_label = tk.Label(
+        # Botón diferente según si es admin o usuario normal
+        if self.is_admin:
+            btn_new = tk.Button(
                 toolbar,
-                text="(Solo administradores pueden crear/editar inscripciones)",
-                font=("Arial", 8),
-                bg=COLORS['background'],
-                fg=COLORS['text_secondary']
+                text="➕ Nueva Inscripción",
+                font=("Arial", 10, "bold"),
+                bg=COLORS['primary'],
+                fg="white",
+                relief=tk.FLAT,
+                cursor="hand2",
+                padx=16,
+                pady=8,
+                command=self.show_new_registration_modal
             )
-            info_label.pack(side=tk.LEFT, padx=(12, 0))
+            btn_new.pack(side=tk.LEFT)
+        else:
+            # Usuario normal: puede inscribirse en eventos
+            if self.user_participant:
+                btn_new = tk.Button(
+                    toolbar,
+                    text="➕ Inscribirme en un Evento",
+                    font=("Arial", 10, "bold"),
+                    bg=COLORS['primary'],
+                    fg="white",
+                    relief=tk.FLAT,
+                    cursor="hand2",
+                    padx=16,
+                    pady=8,
+                    command=self.show_user_registration_modal
+                )
+                btn_new.pack(side=tk.LEFT)
+            else:
+                info_label = tk.Label(
+                    toolbar,
+                    text="⚠️ No tienes un perfil de participante asociado. Contacta al administrador.",
+                    font=("Arial", 9),
+                    bg=COLORS['background'],
+                    fg=COLORS['warning_text']
+                )
+                info_label.pack(side=tk.LEFT, padx=(12, 0))
         
         btn_refresh = tk.Button(
             toolbar,
@@ -102,6 +131,7 @@ class RegistrationView:
         filter_frame = tk.Frame(self.parent, bg=COLORS['background'])
         filter_frame.pack(fill=tk.X, pady=(0, 16))
         
+        # Filtro por evento (siempre visible)
         tk.Label(
             filter_frame,
             text="Filtrar por evento:",
@@ -118,8 +148,29 @@ class RegistrationView:
             width=30,
             font=("Arial", 9)
         )
-        self.filter_event_combo.pack(side=tk.LEFT)
+        self.filter_event_combo.pack(side=tk.LEFT, padx=(0, 16))
         self.filter_event_combo.bind('<<ComboboxSelected>>', lambda e: self.apply_filters())
+        
+        # Filtro por participante (solo para admin)
+        if self.is_admin:
+            tk.Label(
+                filter_frame,
+                text="Filtrar por participante:",
+                font=("Arial", 9),
+                bg=COLORS['background'],
+                fg=COLORS['text_secondary']
+            ).pack(side=tk.LEFT, padx=(0, 8))
+            
+            self.filter_participant_var = tk.StringVar(value="Todos")
+            self.filter_participant_combo = ttk.Combobox(
+                filter_frame,
+                textvariable=self.filter_participant_var,
+                state="readonly",
+                width=30,
+                font=("Arial", 9)
+            )
+            self.filter_participant_combo.pack(side=tk.LEFT)
+            self.filter_participant_combo.bind('<<ComboboxSelected>>', lambda e: self.apply_filters())
         
         # Tabla de inscripciones
         table_container = tk.Frame(self.parent, bg=COLORS['white'], relief=tk.FLAT)
@@ -191,9 +242,15 @@ class RegistrationView:
             events = self.event_controller.get_all() if self.event_controller else []
             event_dict = {e.event_id: e for e in events}
             
-            # Actualizar combo de filtros
+            # Actualizar combo de filtros de eventos
             event_names = ["Todos"] + [e.title for e in events]
             self.filter_event_combo['values'] = event_names
+            
+            # Actualizar combo de filtros de participantes (solo admin)
+            if self.is_admin and hasattr(self, 'filter_participant_combo'):
+                participants = self.participant_controller.get_all() if self.participant_controller else []
+                participant_names = ["Todos"] + [f"{p.first_name} {p.last_name} ({p.email})" for p in participants]
+                self.filter_participant_combo['values'] = participant_names
             
             # Obtener todas las inscripciones
             all_registrations = []
@@ -210,6 +267,13 @@ class RegistrationView:
                         'registered_at': participant.get('registered_at', ''),
                         'status': participant.get('registration_status', 'confirmado')
                     })
+            
+            # Si es usuario normal, filtrar solo sus inscripciones
+            if not self.is_admin and self.user_participant:
+                all_registrations = [
+                    r for r in all_registrations 
+                    if r['participant_id'] == self.user_participant.participant_id
+                ]
             
             # Aplicar filtro
             filtered = self.filter_registrations(all_registrations)
@@ -239,23 +303,40 @@ class RegistrationView:
             traceback.print_exc()
     
     def filter_registrations(self, registrations: List[Dict]) -> List[Dict]:
-        """Filtra las inscripciones según el filtro seleccionado"""
-        filter_value = self.filter_event_var.get()
-        if filter_value == "Todos":
-            return registrations
+        """Filtra las inscripciones según los filtros seleccionados (evento y/o participante)"""
+        filtered = registrations
         
-        # Buscar el evento seleccionado
-        events = self.event_controller.get_all() if self.event_controller else []
-        selected_event = None
-        for event in events:
-            if event.title == filter_value:
-                selected_event = event
-                break
+        # Filtro por evento
+        event_filter = self.filter_event_var.get()
+        if event_filter != "Todos":
+            events = self.event_controller.get_all() if self.event_controller else []
+            selected_event = None
+            for event in events:
+                if event.title == event_filter:
+                    selected_event = event
+                    break
+            
+            if selected_event:
+                filtered = [r for r in filtered if r['event_id'] == selected_event.event_id]
         
-        if selected_event:
-            return [r for r in registrations if r['event_id'] == selected_event.event_id]
+        # Filtro por participante (solo admin)
+        if self.is_admin and hasattr(self, 'filter_participant_var'):
+            participant_filter = self.filter_participant_var.get()
+            if participant_filter != "Todos":
+                # Extraer el nombre del participante del formato "Nombre Apellido (email)"
+                # Buscar la inscripción que coincida con ese participante
+                participants = self.participant_controller.get_all() if self.participant_controller else []
+                selected_participant = None
+                for p in participants:
+                    participant_display = f"{p.first_name} {p.last_name} ({p.email})"
+                    if participant_display == participant_filter:
+                        selected_participant = p
+                        break
+                
+                if selected_participant:
+                    filtered = [r for r in filtered if r['participant_id'] == selected_participant.participant_id]
         
-        return registrations
+        return filtered
     
     def apply_filters(self):
         """Aplica los filtros y recarga la tabla"""
@@ -330,7 +411,7 @@ class RegistrationView:
                 )
                 label.pack(side=tk.LEFT, padx=2)
         
-        # Botón eliminar (solo admin)
+        # Botón eliminar (admin) o cancelar inscripción (usuario normal)
         if self.is_admin:
             btn_delete = tk.Button(
                 row_frame,
@@ -346,6 +427,22 @@ class RegistrationView:
                 )
             )
             btn_delete.pack(side=tk.LEFT, padx=4)
+        elif self.user_participant and registration['participant_id'] == self.user_participant.participant_id:
+            # Usuario normal solo puede cancelar sus propias inscripciones
+            btn_cancel = tk.Button(
+                row_frame,
+                text="❌ Cancelar",
+                font=("Arial", 9),
+                bg=row_frame.cget('bg'),
+                fg=COLORS['danger_text'],
+                relief=tk.FLAT,
+                cursor="hand2",
+                command=lambda: self.delete_registration(
+                    registration['event_id'],
+                    registration['participant_id']
+                )
+            )
+            btn_cancel.pack(side=tk.LEFT, padx=4)
     
     def show_new_registration_modal(self):
         """Muestra el modal para crear una nueva inscripción"""
@@ -514,21 +611,173 @@ class RegistrationView:
             pady=8
         ).pack(side=tk.LEFT)
     
+    def show_user_registration_modal(self):
+        """Muestra el modal para que un usuario normal se inscriba en un evento"""
+        if not self.registration_controller:
+            messagebox.showwarning("Advertencia", "Modo Demo - No se pueden crear inscripciones")
+            return
+        
+        if not self.user_participant:
+            messagebox.showerror(
+                "Error",
+                "No tienes un perfil de participante asociado.\n\n"
+                "Contacta al administrador para asociar tu usuario con un participante."
+            )
+            return
+        
+        modal = tk.Toplevel(self.parent)
+        modal.title("Inscribirme en un Evento")
+        modal.geometry("500x250")
+        modal.transient(self.parent)
+        modal.grab_set()
+        
+        # Centrar modal
+        modal.update_idletasks()
+        x = (modal.winfo_screenwidth() // 2) - (500 // 2)
+        y = (modal.winfo_screenheight() // 2) - (250 // 2)
+        modal.geometry(f"500x250+{x}+{y}")
+        
+        content = tk.Frame(modal, bg=COLORS['white'])
+        content.pack(fill=tk.BOTH, expand=True, padx=24, pady=24)
+        
+        # Título
+        title = tk.Label(
+            content,
+            text="Inscribirme en un Evento",
+            font=("Arial", 14, "bold"),
+            bg=COLORS['white'],
+            fg=COLORS['primary']
+        )
+        title.pack(anchor=tk.W, pady=(0, 8))
+        
+        # Mostrar información del participante
+        participant_info = tk.Label(
+            content,
+            text=f"Te inscribirás como: {self.user_participant.first_name} {self.user_participant.last_name}",
+            font=("Arial", 9),
+            bg=COLORS['white'],
+            fg=COLORS['text_secondary']
+        )
+        participant_info.pack(anchor=tk.W, pady=(0, 20))
+        
+        # Seleccionar evento
+        tk.Label(
+            content,
+            text="Evento:",
+            font=("Arial", 10),
+            bg=COLORS['white'],
+            fg=COLORS['text_primary']
+        ).pack(anchor=tk.W, pady=(0, 4))
+        
+        events = self.event_controller.get_all() if self.event_controller else []
+        # Filtrar solo eventos activos
+        active_events = [e for e in events if e.status == 'activo']
+        event_names = [e.title for e in active_events]
+        
+        if not event_names:
+            tk.Label(
+                content,
+                text="No hay eventos activos disponibles",
+                font=("Arial", 9),
+                bg=COLORS['white'],
+                fg=COLORS['text_secondary']
+            ).pack(anchor=tk.W, pady=(0, 20))
+            tk.Button(
+                content,
+                text="Cerrar",
+                command=modal.destroy,
+                bg=COLORS['primary'],
+                fg="white",
+                padx=20,
+                pady=8
+            ).pack(pady=10)
+            return
+        
+        event_combo = ttk.Combobox(
+            content,
+            values=event_names,
+            state="readonly",
+            font=("Arial", 10),
+            width=40
+        )
+        event_combo.pack(fill=tk.X, pady=(0, 24))
+        event_combo.current(0)
+        
+        def on_confirm():
+            event_idx = event_combo.current()
+            
+            if event_idx < 0:
+                messagebox.showerror("Error", "Selecciona un evento")
+                return
+            
+            selected_event = active_events[event_idx]
+            
+            # Registrar al participante del usuario en el evento
+            registration_id = self.registration_controller.register_participant(
+                selected_event.event_id,
+                self.user_participant.participant_id
+            )
+            
+            if registration_id:
+                messagebox.showinfo("Éxito", f"Te has inscrito correctamente en '{selected_event.title}'")
+                modal.destroy()
+                self.load_data()
+            else:
+                messagebox.showerror(
+                    "Error",
+                    "No se pudo realizar la inscripción.\n\n"
+                    "Ya estás inscrito en este evento o el evento está lleno."
+                )
+        
+        # Botones
+        btn_frame = tk.Frame(content, bg=COLORS['white'])
+        btn_frame.pack(fill=tk.X)
+        
+        tk.Button(
+            btn_frame,
+            text="Cancelar",
+            command=modal.destroy,
+            bg=COLORS['white'],
+            fg=COLORS['text_primary'],
+            relief=tk.SOLID,
+            borderwidth=1,
+            padx=20,
+            pady=8
+        ).pack(side=tk.LEFT, padx=(0, 8))
+        
+        tk.Button(
+            btn_frame,
+            text="Inscribirme",
+            command=on_confirm,
+            bg=COLORS['primary'],
+            fg="white",
+            padx=20,
+            pady=8
+        ).pack(side=tk.LEFT)
+    
     def delete_registration(self, event_id: int, participant_id: int):
         """Elimina una inscripción"""
         if not self.registration_controller:
             messagebox.showwarning("Advertencia", "Modo Demo - No se pueden eliminar inscripciones")
             return
         
+        # Verificar que el usuario solo puede cancelar sus propias inscripciones
+        if not self.is_admin and self.user_participant:
+            if participant_id != self.user_participant.participant_id:
+                messagebox.showerror("Error", "Solo puedes cancelar tus propias inscripciones")
+                return
+        
+        action_text = "cancelar esta inscripción" if not self.is_admin else "eliminar esta inscripción"
         result = messagebox.askyesno(
-            "Confirmar eliminación",
-            "¿Estás seguro de que deseas eliminar esta inscripción?"
+            "Confirmar",
+            f"¿Estás seguro de que deseas {action_text}?"
         )
         
         if result:
             success = self.registration_controller.unregister_participant(event_id, participant_id)
             if success:
-                messagebox.showinfo("Éxito", "Inscripción eliminada correctamente")
+                message = "Inscripción cancelada correctamente" if not self.is_admin else "Inscripción eliminada correctamente"
+                messagebox.showinfo("Éxito", message)
                 self.load_data()
             else:
                 messagebox.showerror("Error", "No se pudo eliminar la inscripción")

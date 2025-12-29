@@ -17,28 +17,39 @@ class RegistrationController:
     
     def register_participant(self, event_id: int, participant_id: int, 
                            status: str = "confirmado") -> Optional[int]:
-        """Registra un participante en un evento"""
+        """
+        Registra un participante en un evento.
+        Usa bloqueo SELECT FOR UPDATE para evitar condiciones de carrera
+        cuando múltiples usuarios intentan inscribirse simultáneamente.
+        """
         conn = None
         try:
             conn = self.db.get_connection()
+            # Configurar nivel de aislamiento REPEATABLE READ para evitar lecturas sucias y condiciones de carrera
             cursor = conn.cursor()
+            cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+            conn.start_transaction()
             
-            # Verificar capacidad del evento
+            # Verificar capacidad del evento con bloqueo FOR UPDATE
+            # Esto previene que otro usuario modifique el evento mientras verificamos
             capacity_query = """
                 SELECT capacity, 
                        (SELECT COUNT(*) FROM event_registrations 
                         WHERE event_id = %s AND status = 'confirmado') as current
                 FROM events WHERE event_id = %s
+                FOR UPDATE
             """
             cursor.execute(capacity_query, (event_id, event_id))
             result = cursor.fetchone()
             
             if not result:
+                conn.rollback()
                 cursor.close()
                 return None
             
             capacity, current = result
             if current >= capacity:
+                conn.rollback()
                 cursor.close()
                 return None  # Evento lleno
             
@@ -49,6 +60,7 @@ class RegistrationController:
             """
             cursor.execute(check_query, (event_id, participant_id))
             if cursor.fetchone():
+                conn.rollback()
                 cursor.close()
                 return None  # Ya está registrado
             

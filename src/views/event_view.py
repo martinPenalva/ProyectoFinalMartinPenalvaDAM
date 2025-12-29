@@ -642,7 +642,12 @@ class EventView:
                     modal.destroy()
                     self.load_events()
                 else:
-                    messagebox.showerror("Error", "No se pudo actualizar el evento (posible conflicto de concurrencia)")
+                    messagebox.showerror(
+                        "Error de Concurrencia", 
+                        "No se pudo actualizar el evento.\n\n"
+                        "El evento fue modificado por otro usuario mientras lo editabas.\n"
+                        "Por favor, recarga el evento y vuelve a intentar con los datos actualizados."
+                    )
             else:
                 new_event = Event(
                     title=title,

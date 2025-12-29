@@ -600,7 +600,8 @@ class MainWindow:
                 self.registration_controller,
                 self.event_controller,
                 self.participant_controller,
-                self.is_admin
+                self.is_admin,
+                self.username  # Pasar el username del usuario actual
             )
         except Exception as e:
             label = tk.Label(

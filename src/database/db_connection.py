@@ -10,7 +10,7 @@ import threading
 
 # Agregar el directorio raíz al path para imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-from config.config import DB_CONFIG
+from config.config import DB_CONFIG, CONCURRENCY_CONFIG
 
 
 class DatabaseConnection:
@@ -40,15 +40,16 @@ class DatabaseConnection:
         self._initialized = True
     
     def _create_connection_pool(self):
-        """Crea un pool de conexiones a la base de datos"""
+        """Crea un pool de conexiones a la base de datos para soportar múltiples usuarios simultáneos"""
         try:
+            pool_size = CONCURRENCY_CONFIG.get('pool_size', 20)
             self.pool = pooling.MySQLConnectionPool(
                 pool_name="eventos_pool",
-                pool_size=5,
+                pool_size=pool_size,
                 pool_reset_session=True,
                 **DB_CONFIG
             )
-            print("Pool de conexiones creado exitosamente")
+            print(f"Pool de conexiones creado exitosamente (tamaño: {pool_size} conexiones)")
         except (Error, Exception) as e:
             # No crear pool si hay error
             self.pool = None
@@ -56,11 +57,16 @@ class DatabaseConnection:
             raise
     
     def get_connection(self):
-        """Obtiene una conexión del pool"""
+        """
+        Obtiene una conexión del pool.
+        Cada usuario puede tener su propia conexión simultáneamente.
+        Las transacciones se manejan manualmente en los controladores.
+        """
         if not self.pool:
             raise Error("No hay pool de conexiones disponible")
         try:
-            return self.pool.get_connection()
+            conn = self.pool.get_connection()
+            return conn
         except Error as e:
             print(f"Error al obtener conexión del pool: {e}")
             raise

@@ -40,6 +40,7 @@ EXPORT_CONFIG = {
 # Configuración de concurrencia
 CONCURRENCY_CONFIG = {
     'lock_timeout': 30,  # segundos
-    'max_retries': 3
+    'max_retries': 3,
+    'pool_size': 20  # Tamaño del pool de conexiones para soportar múltiples usuarios simultáneos
 }
 

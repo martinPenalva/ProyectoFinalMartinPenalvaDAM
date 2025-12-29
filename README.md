@@ -9,7 +9,9 @@ Aplicación de escritorio desarrollada en Python para la gestión centralizada d
 - ✅ Asignación de participantes a eventos
 - ✅ Búsqueda y filtrado avanzado
 - ✅ Exportación a CSV y PDF
-- ✅ Gestión de concurrencia multiusuario
+- ✅ **Soporte para múltiples usuarios simultáneos**: La aplicación permite que varios usuarios accedan y trabajen al mismo tiempo sin conflictos
+- ✅ Gestión de concurrencia con control de versiones optimista y bloqueos transaccionales
+- ✅ Pool de conexiones configurable para optimizar el rendimiento con múltiples usuarios
 - ✅ Interfaz gráfica intuitiva con Tkinter
 
 ## Requisitos
@@ -41,6 +43,19 @@ Ejecutar la aplicación:
 ```bash
 python src/main.py
 ```
+
+### Múltiples Usuarios Simultáneos
+
+La aplicación está diseñada para soportar múltiples usuarios trabajando simultáneamente:
+
+- **Cada usuario ejecuta su propia instancia** de la aplicación en su ordenador
+- **Pool de conexiones compartido**: Todas las instancias comparten un pool de conexiones a la base de datos (configurable, por defecto 20 conexiones)
+- **Control de concurrencia**: 
+  - Control de versiones optimista para evitar conflictos al editar eventos
+  - Bloqueos transaccionales (`SELECT FOR UPDATE`) para prevenir condiciones de carrera en inscripciones
+  - Nivel de aislamiento `REPEATABLE READ` para garantizar consistencia de datos
+
+**Nota**: Para un uso óptimo con muchos usuarios simultáneos, asegúrate de que MySQL Server tenga suficientes recursos y considera ajustar el tamaño del pool en `config/config.py` según tus necesidades.
 
 ## Estructura del Proyecto
 

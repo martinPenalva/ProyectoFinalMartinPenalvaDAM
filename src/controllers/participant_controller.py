@@ -176,4 +176,77 @@ class ParticipantController:
         finally:
             if conn:
                 conn.close()
+    
+    def get_by_email(self, email: str) -> Optional[Participant]:
+        """Obtiene un participante por su email"""
+        conn = None
+        try:
+            conn = self.db.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            
+            query = "SELECT * FROM participants WHERE email = %s"
+            cursor.execute(query, (email,))
+            result = cursor.fetchone()
+            cursor.close()
+            
+            if result:
+                return Participant.from_dict(result)
+            return None
+            
+        except Error as e:
+            print(f"Error al obtener participante por email: {e}")
+            return None
+        finally:
+            if conn:
+                conn.close()
+    
+    def find_by_username(self, username: str) -> Optional[Participant]:
+        """
+        Busca un participante asociado a un username.
+        Intenta múltiples estrategias:
+        1. Email exacto = username
+        2. Email que empiece con username@
+        3. Email que contenga username (parte antes del @)
+        """
+        if not username:
+            return None
+        
+        # Estrategia 1: Email exacto
+        participant = self.get_by_email(username)
+        if participant:
+            return participant
+        
+        # Estrategia 2: Buscar por email que empiece con username@
+        conn = None
+        try:
+            conn = self.db.get_connection()
+            cursor = conn.cursor(dictionary=True)
+            
+            # Buscar email que empiece con username@
+            query = "SELECT * FROM participants WHERE email LIKE %s"
+            cursor.execute(query, (f"{username}@%",))
+            result = cursor.fetchone()
+            
+            if result:
+                cursor.close()
+                return Participant.from_dict(result)
+            
+            # Estrategia 3: Buscar email donde la parte antes del @ sea igual a username
+            query = "SELECT * FROM participants WHERE SUBSTRING_INDEX(email, '@', 1) = %s"
+            cursor.execute(query, (username,))
+            result = cursor.fetchone()
+            
+            cursor.close()
+            
+            if result:
+                return Participant.from_dict(result)
+            
+            return None
+            
+        except Error as e:
+            print(f"Error al buscar participante por username: {e}")
+            return None
+        finally:
+            if conn:
+                conn.close()
 
