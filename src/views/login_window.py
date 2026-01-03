@@ -27,8 +27,43 @@ class LoginWindow:
         self.root.geometry("900x500")
         self.root.resizable(False, False)
         
+        # Configurar icono
+        self.setup_icon()
+        
         # Centrar ventana
         self.center_window()
+    
+    def setup_icon(self):
+        """Configura el icono de la ventana"""
+        try:
+            # Buscar el icono en diferentes ubicaciones posibles
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            icon_paths = [
+                os.path.join(root_dir, 'icono.ico'),
+                os.path.join(root_dir, 'assets', 'icono.ico'),
+                os.path.join(root_dir, 'src', 'assets', 'icono.ico'),
+            ]
+            
+            icon_path = None
+            for path in icon_paths:
+                if os.path.exists(path):
+                    icon_path = path
+                    break
+            
+            if icon_path:
+                # Windows
+                try:
+                    self.root.iconbitmap(icon_path)
+                except:
+                    # Si iconbitmap falla, intentar con PhotoImage
+                    try:
+                        icon = tk.PhotoImage(file=icon_path)
+                        self.root.iconphoto(False, icon)
+                    except:
+                        pass
+        except Exception as e:
+            # Si no se puede cargar el icono, continuar sin él
+            pass
         
         # Configurar estilo
         style = ttk.Style()

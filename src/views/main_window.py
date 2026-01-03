@@ -99,8 +99,62 @@ class MainWindow:
         self.root.minsize(APP_CONFIG['min_window_width'], APP_CONFIG['min_window_height'])
         self.root.configure(bg=COLORS['background'])
         
-        # Centrar ventana
-        self.center_window()
+        # Configurar icono
+        self.setup_icon()
+        
+        # Maximizar ventana (pantalla completa) después de que se muestre
+        self.root.update_idletasks()
+        try:
+            # Windows - maximizar
+            self.root.state('zoomed')
+        except:
+            try:
+                # Alternativa para Windows
+                self.root.wm_state('zoomed')
+            except:
+                try:
+                    # Linux
+                    self.root.attributes('-zoomed', True)
+                except:
+                    # Si nada funciona, usar geometry para pantalla completa
+                    width = self.root.winfo_screenwidth()
+                    height = self.root.winfo_screenheight()
+                    self.root.geometry(f"{width}x{height}+0+0")
+        
+        # Centrar ventana (si no está maximizada)
+        # self.center_window()
+    
+    def setup_icon(self):
+        """Configura el icono de la ventana"""
+        try:
+            # Buscar el icono en diferentes ubicaciones posibles
+            root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            icon_paths = [
+                os.path.join(root_dir, 'icono.ico'),
+                os.path.join(root_dir, 'assets', 'icono.ico'),
+                os.path.join(root_dir, 'src', 'assets', 'icono.ico'),
+            ]
+            
+            icon_path = None
+            for path in icon_paths:
+                if os.path.exists(path):
+                    icon_path = path
+                    break
+            
+            if icon_path:
+                # Windows
+                try:
+                    self.root.iconbitmap(icon_path)
+                except:
+                    # Si iconbitmap falla, intentar con PhotoImage
+                    try:
+                        icon = tk.PhotoImage(file=icon_path)
+                        self.root.iconphoto(False, icon)
+                    except:
+                        pass
+        except Exception as e:
+            # Si no se puede cargar el icono, continuar sin él
+            print(f"No se pudo cargar el icono: {e}")
     
     def center_window(self):
         """Centra la ventana en la pantalla"""

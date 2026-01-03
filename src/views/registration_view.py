@@ -176,12 +176,17 @@ class RegistrationView:
         table_container = tk.Frame(self.parent, bg=COLORS['white'], relief=tk.FLAT)
         table_container.pack(fill=tk.BOTH, expand=True)
         
-        # Headers
+        # Headers (diferentes para admin y usuario normal)
         headers_frame = tk.Frame(table_container, bg=COLORS['table_header'])
         headers_frame.pack(fill=tk.X)
         
-        headers = ["Evento", "Participante", "Email", "Teléfono", "Fecha Inscripción", "Estado", "Acciones"]
-        header_widths = [200, 150, 180, 100, 140, 100, 120]
+        if self.is_admin:
+            headers = ["Evento", "Participante", "Email", "Teléfono", "Fecha Inscripción", "Estado", "Acciones"]
+            header_widths = [200, 150, 180, 100, 140, 100, 120]
+        else:
+            # Para usuarios normales: columnas más simples (solo ven sus propias inscripciones)
+            headers = ["Evento", "Fecha Inscripción", "Acciones"]
+            header_widths = [400, 200, 150]
         
         for header, width in zip(headers, header_widths):
             label = tk.Label(
@@ -367,52 +372,53 @@ class RegistrationView:
         phone = registration.get('phone', '')
         phone_str = str(phone) if phone else "-"
         
-        # Estado con color
-        status = registration.get('status', 'confirmado')
-        status_bg = COLORS['success'] if status == 'confirmado' else COLORS['warning']
-        status_text_color = COLORS['success_text'] if status == 'confirmado' else COLORS['warning_text']
-        
-        data = [
-            registration['event_title'][:30],
-            registration['participant_name'][:25],
-            registration['email'][:30],
-            phone_str,
-            date_str,
-            status
-        ]
-        
-        widths = [200, 150, 180, 100, 140, 100]
-        
-        for data_item, width in zip(data, widths):
-            if data_item == status:
-                # Estado con color
-                status_label = tk.Label(
-                    row_frame,
-                    text=status.upper(),
-                    font=("Arial", 8),
-                    bg=status_bg,
-                    fg=status_text_color,
-                    padx=8,
-                    pady=6,
-                    anchor=tk.W
-                )
-                status_label.pack(side=tk.LEFT, padx=2, fill=tk.Y)
-            else:
-                label = tk.Label(
-                    row_frame,
-                    text=str(data_item),
-                    font=("Arial", 9),
-                    bg=row_frame.cget('bg'),
-                    fg=COLORS['text_primary'],
-                    padx=8,
-                    pady=8,
-                    anchor=tk.W,
-                    width=width // 8
-                )
-                label.pack(side=tk.LEFT, padx=2)
-        
-        # Botón eliminar (admin) o cancelar inscripción (usuario normal)
+        # Datos según tipo de usuario
         if self.is_admin:
+            # Estado con color (solo para admin)
+            status = registration.get('status', 'confirmado')
+            status_bg = COLORS['success'] if status == 'confirmado' else COLORS['warning']
+            status_text_color = COLORS['success_text'] if status == 'confirmado' else COLORS['warning_text']
+            
+            data = [
+                registration['event_title'][:30],
+                registration['participant_name'][:25],
+                registration['email'][:30],
+                phone_str,
+                date_str,
+                status
+            ]
+            
+            widths = [200, 150, 180, 100, 140, 100]
+            
+            for data_item, width in zip(data, widths):
+                if data_item == status:
+                    # Estado con color
+                    status_label = tk.Label(
+                        row_frame,
+                        text=status.upper(),
+                        font=("Arial", 8),
+                        bg=status_bg,
+                        fg=status_text_color,
+                        padx=8,
+                        pady=6,
+                        anchor=tk.W
+                    )
+                    status_label.pack(side=tk.LEFT, padx=2, fill=tk.Y)
+                else:
+                    label = tk.Label(
+                        row_frame,
+                        text=str(data_item),
+                        font=("Arial", 9),
+                        bg=row_frame.cget('bg'),
+                        fg=COLORS['text_primary'],
+                        padx=8,
+                        pady=8,
+                        anchor=tk.W,
+                        width=width // 8
+                    )
+                    label.pack(side=tk.LEFT, padx=2)
+            
+            # Botón eliminar (admin)
             btn_delete = tk.Button(
                 row_frame,
                 text="🗑️",
@@ -427,22 +433,48 @@ class RegistrationView:
                 )
             )
             btn_delete.pack(side=tk.LEFT, padx=4)
-        elif self.user_participant and registration['participant_id'] == self.user_participant.participant_id:
-            # Usuario normal solo puede cancelar sus propias inscripciones
-            btn_cancel = tk.Button(
-                row_frame,
-                text="❌ Cancelar",
-                font=("Arial", 9),
-                bg=row_frame.cget('bg'),
-                fg=COLORS['danger_text'],
-                relief=tk.FLAT,
-                cursor="hand2",
-                command=lambda: self.delete_registration(
-                    registration['event_id'],
-                    registration['participant_id']
+        else:
+            # Para usuarios normales: solo evento y fecha
+            data = [
+                registration['event_title'][:50],
+                date_str
+            ]
+            
+            widths = [400, 200]
+            
+            for data_item, width in zip(data, widths):
+                label = tk.Label(
+                    row_frame,
+                    text=str(data_item),
+                    font=("Arial", 9),
+                    bg=row_frame.cget('bg'),
+                    fg=COLORS['text_primary'],
+                    padx=8,
+                    pady=8,
+                    anchor=tk.W,
+                    width=width // 8
                 )
-            )
-            btn_cancel.pack(side=tk.LEFT, padx=4)
+                label.pack(side=tk.LEFT, padx=2)
+            
+            # Botón cancelar (usuario normal) - rojo más intenso
+            if self.user_participant and registration['participant_id'] == self.user_participant.participant_id:
+                btn_cancel = tk.Button(
+                    row_frame,
+                    text="Cancelar Inscripción",
+                    font=("Arial", 9, "bold"),
+                    bg="#dc2626",  # Rojo más intenso
+                    fg="white",
+                    relief=tk.FLAT,
+                    cursor="hand2",
+                    padx=12,
+                    pady=6,
+                    activebackground="#b91c1c",  # Rojo más oscuro al hacer hover
+                    command=lambda: self.delete_registration(
+                        registration['event_id'],
+                        registration['participant_id']
+                    )
+                )
+                btn_cancel.pack(side=tk.LEFT, padx=8)
     
     def show_new_registration_modal(self):
         """Muestra el modal para crear una nueva inscripción"""

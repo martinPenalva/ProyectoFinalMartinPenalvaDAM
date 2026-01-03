@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import sys
 import os
+import csv
 from datetime import datetime
 from typing import List, Dict
 
@@ -181,8 +182,24 @@ class ReportsView:
             if filepath:
                 messagebox.showinfo(
                     "Éxito",
-                    f"Eventos exportados correctamente a:\n{filepath}"
+                    f"Eventos exportados correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
                 )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            elif filepath is None:
+                # Usuario canceló el diálogo
+                pass
             else:
                 messagebox.showerror("Error", "No se pudo exportar los eventos")
         except Exception as e:
@@ -220,8 +237,24 @@ class ReportsView:
             if filepath:
                 messagebox.showinfo(
                     "Éxito",
-                    f"Eventos exportados correctamente a:\n{filepath}"
+                    f"Eventos exportados correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
                 )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            elif filepath is None:
+                # Usuario canceló el diálogo
+                pass
             else:
                 messagebox.showerror("Error", "No se pudo exportar los eventos")
         except Exception as e:
@@ -257,8 +290,24 @@ class ReportsView:
             if filepath:
                 messagebox.showinfo(
                     "Éxito",
-                    f"Participantes exportados correctamente a:\n{filepath}"
+                    f"Participantes exportados correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
                 )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            elif filepath is None:
+                # Usuario canceló el diálogo
+                pass
             else:
                 messagebox.showerror("Error", "No se pudo exportar los participantes")
         except Exception as e:
@@ -294,8 +343,24 @@ class ReportsView:
             if filepath:
                 messagebox.showinfo(
                     "Éxito",
-                    f"Participantes exportados correctamente a:\n{filepath}"
+                    f"Participantes exportados correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
                 )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            elif filepath is None:
+                # Usuario canceló el diálogo
+                pass
             else:
                 messagebox.showerror("Error", "No se pudo exportar los participantes")
         except Exception as e:
@@ -332,28 +397,48 @@ class ReportsView:
                 messagebox.showinfo("Información", "No hay inscripciones para exportar")
                 return
             
+            # Usar diálogo de guardado
+            default_filename = f"inscripciones_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            filepath = filedialog.asksaveasfilename(
+                defaultextension=".csv",
+                filetypes=[("Archivos CSV", "*.csv"), ("Todos los archivos", "*.*")],
+                initialfile=default_filename,
+                title="Guardar inscripciones como CSV"
+            )
+            
+            if not filepath:  # Usuario canceló
+                return
+            
             # Exportar usando CSVExporter
-            from src.utils.exporters import CSVExporter
-            import csv
-            import os
             from config.config import EXPORT_CONFIG
             
-            filename = f"inscripciones_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-            exports_dir = EXPORT_CONFIG['exports_folder']
-            os.makedirs(exports_dir, exist_ok=True)
-            filepath = os.path.join(exports_dir, filename)
-            
-            with open(filepath, 'w', newline='', encoding=EXPORT_CONFIG['csv_encoding']) as f:
-                if all_registrations:
-                    fieldnames = all_registrations[0].keys()
-                    writer = csv.DictWriter(f, fieldnames=fieldnames)
-                    writer.writeheader()
-                    writer.writerows(all_registrations)
-            
-            messagebox.showinfo(
-                "Éxito",
-                f"Inscripciones exportadas correctamente a:\n{filepath}"
-            )
+            try:
+                with open(filepath, 'w', newline='', encoding=EXPORT_CONFIG['csv_encoding']) as f:
+                    if all_registrations:
+                        fieldnames = all_registrations[0].keys()
+                        writer = csv.DictWriter(f, fieldnames=fieldnames)
+                        writer.writeheader()
+                        writer.writerows(all_registrations)
+                
+                messagebox.showinfo(
+                    "Éxito",
+                    f"Inscripciones exportadas correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
+                )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            except Exception as e:
+                messagebox.showerror("Error", f"Error al guardar el archivo:\n{str(e)}")
         except Exception as e:
             messagebox.showerror("Error", f"Error al exportar inscripciones:\n{str(e)}")
             import traceback
@@ -361,11 +446,61 @@ class ReportsView:
     
     def export_registrations_pdf(self):
         """Exporta inscripciones a PDF"""
-        messagebox.showinfo(
-            "Información",
-            "La exportación de inscripciones a PDF está en desarrollo.\n\n"
-            "Por ahora, puedes usar la exportación CSV."
-        )
+        if not self.registration_controller or not self.event_controller:
+            messagebox.showwarning("Advertencia", "Modo Demo - No se pueden exportar datos")
+            return
+        
+        try:
+            # Obtener todas las inscripciones
+            all_registrations = []
+            events = self.event_controller.get_all() if self.event_controller else []
+            
+            for event in events:
+                participants = self.registration_controller.get_event_participants(event.event_id)
+                for participant in participants:
+                    all_registrations.append({
+                        'ID Evento': event.event_id,
+                        'Evento': event.title,
+                        'ID Participante': participant['participant_id'],
+                        'Participante': f"{participant['first_name']} {participant['last_name']}",
+                        'Email': participant['email'],
+                        'Teléfono': participant.get('phone', '') or '',
+                        'Fecha Inscripción': participant.get('registered_at', ''),
+                        'Estado': participant.get('registration_status', 'confirmado')
+                    })
+            
+            if not all_registrations:
+                messagebox.showinfo("Información", "No hay inscripciones para exportar")
+                return
+            
+            filepath = PDFExporter.export_registrations(all_registrations)
+            if filepath:
+                messagebox.showinfo(
+                    "Éxito",
+                    f"Inscripciones exportadas correctamente a:\n{filepath}\n\n"
+                    "El archivo se ha guardado en tu ordenador."
+                )
+                # Abrir la carpeta donde se guardó el archivo
+                try:
+                    import subprocess
+                    import platform
+                    if platform.system() == "Windows":
+                        os.startfile(os.path.dirname(filepath))
+                    elif platform.system() == "Darwin":  # macOS
+                        subprocess.Popen(["open", os.path.dirname(filepath)])
+                    else:  # Linux
+                        subprocess.Popen(["xdg-open", os.path.dirname(filepath)])
+                except:
+                    pass
+            elif filepath is None:
+                # Usuario canceló el diálogo
+                pass
+            else:
+                messagebox.showerror("Error", "No se pudo exportar las inscripciones")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al exportar inscripciones:\n{str(e)}")
+            import traceback
+            traceback.print_exc()
     
     def export_full_report(self):
         """Exporta un reporte completo en PDF"""
