@@ -392,18 +392,45 @@ class RegistrationView:
             
             for data_item, width in zip(data, widths):
                 if data_item == status:
-                    # Estado con color
-                    status_label = tk.Label(
-                        row_frame,
-                        text=status.upper(),
-                        font=("Arial", 8),
-                        bg=status_bg,
-                        fg=status_text_color,
-                        padx=8,
-                        pady=6,
-                        anchor=tk.W
+                    # Estado con combobox para poder modificarlo (admin)
+                    # Mapeo de estados a colores
+                    status_colors = {
+                        'confirmado': (COLORS['success'], COLORS['success_text']),
+                        'cancelado': (COLORS['danger'], COLORS['danger_text']),
+                        'pendiente': (COLORS['warning'], COLORS['warning_text'])
+                    }
+                    
+                    current_bg, current_fg = status_colors.get(status.lower(), (COLORS['text_secondary'], COLORS['white']))
+                    
+                    # Frame con color de fondo según el estado (más visible)
+                    status_frame = tk.Frame(row_frame, bg=current_bg, relief=tk.SOLID, borderwidth=1)
+                    status_frame.pack(side=tk.LEFT, padx=2, fill=tk.Y)
+                    
+                    status_var = tk.StringVar(value=status.capitalize())
+                    
+                    # Crear combobox dentro del frame con color
+                    status_combo = ttk.Combobox(
+                        status_frame,
+                        textvariable=status_var,
+                        values=['Confirmado', 'Cancelado', 'Pendiente'],
+                        state='readonly',
+                        font=("Arial", 8, "bold"),
+                        width=12
                     )
-                    status_label.pack(side=tk.LEFT, padx=2, fill=tk.Y)
+                    status_combo.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+                    
+                    # Callback para cambiar estado y actualizar color del frame
+                    def on_status_change(e, event_id=registration['event_id'], 
+                                       participant_id=registration['participant_id'],
+                                       var=status_var,
+                                       frame=status_frame):
+                        new_status = var.get().lower()
+                        if self.change_registration_status(event_id, participant_id, new_status):
+                            # Actualizar color del frame
+                            new_bg, new_fg = status_colors.get(new_status, (COLORS['text_secondary'], COLORS['white']))
+                            frame.config(bg=new_bg)
+                    
+                    status_combo.bind('<<ComboboxSelected>>', on_status_change)
                 else:
                     label = tk.Label(
                         row_frame,
@@ -456,25 +483,53 @@ class RegistrationView:
                 )
                 label.pack(side=tk.LEFT, padx=2)
             
-            # Botón cancelar (usuario normal) - rojo más intenso
+            # Botón cancelar y estado (usuario normal) - cambia estado a cancelado
             if self.user_participant and registration['participant_id'] == self.user_participant.participant_id:
-                btn_cancel = tk.Button(
+                current_status = registration.get('status', 'confirmado').lower()
+                
+                # Mapeo de estados a colores
+                status_colors = {
+                    'confirmado': (COLORS['success'], COLORS['success_text']),
+                    'cancelado': (COLORS['danger'], COLORS['danger_text']),
+                    'pendiente': (COLORS['warning'], COLORS['warning_text'])
+                }
+                
+                status_bg, status_fg = status_colors.get(current_status, (COLORS['text_secondary'], COLORS['white']))
+                
+                # Mostrar estado
+                status_label = tk.Label(
                     row_frame,
-                    text="Cancelar Inscripción",
-                    font=("Arial", 9, "bold"),
-                    bg="#dc2626",  # Rojo más intenso
-                    fg="white",
-                    relief=tk.FLAT,
-                    cursor="hand2",
-                    padx=12,
+                    text=current_status.upper(),
+                    font=("Arial", 8, "bold"),
+                    bg=status_bg,
+                    fg=status_fg,
+                    padx=8,
                     pady=6,
-                    activebackground="#b91c1c",  # Rojo más oscuro al hacer hover
-                    command=lambda: self.delete_registration(
-                        registration['event_id'],
-                        registration['participant_id']
-                    )
+                    relief=tk.SOLID,
+                    borderwidth=1
                 )
-                btn_cancel.pack(side=tk.LEFT, padx=8)
+                status_label.pack(side=tk.LEFT, padx=(8, 4))
+                
+                # Botón cancelar solo si no está cancelado
+                if current_status != 'cancelado':
+                    btn_cancel = tk.Button(
+                        row_frame,
+                        text="Cancelar Inscripción",
+                        font=("Arial", 9, "bold"),
+                        bg="#dc2626",  # Rojo más intenso
+                        fg="white",
+                        relief=tk.FLAT,
+                        cursor="hand2",
+                        padx=12,
+                        pady=6,
+                        activebackground="#b91c1c",  # Rojo más oscuro al hacer hover
+                        command=lambda: self.change_registration_status(
+                            registration['event_id'],
+                            registration['participant_id'],
+                            'cancelado'
+                        )
+                    )
+                    btn_cancel.pack(side=tk.LEFT, padx=4)
     
     def show_new_registration_modal(self):
         """Muestra el modal para crear una nueva inscripción"""
@@ -787,29 +842,75 @@ class RegistrationView:
             pady=8
         ).pack(side=tk.LEFT)
     
+    def change_registration_status(self, event_id: int, participant_id: int, new_status: str) -> bool:
+        """
+        Cambia el estado de una inscripción
+        
+        Args:
+            event_id: ID del evento
+            participant_id: ID del participante
+            new_status: Nuevo estado ('confirmado', 'cancelado', 'pendiente')
+        
+        Returns:
+            True si se cambió correctamente, False en caso contrario
+        """
+        if not self.registration_controller:
+            messagebox.showwarning("Advertencia", "Modo Demo - No se pueden modificar inscripciones")
+            return False
+        
+        # Verificar permisos: usuarios normales solo pueden cancelar sus propias inscripciones
+        if not self.is_admin and self.user_participant:
+            if participant_id != self.user_participant.participant_id:
+                messagebox.showerror("Error", "Solo puedes modificar tus propias inscripciones")
+                return False
+            # Usuarios normales solo pueden cambiar a 'cancelado'
+            if new_status != 'cancelado':
+                messagebox.showerror("Error", "Solo puedes cancelar tus inscripciones")
+                return False
+        
+        try:
+            success = self.registration_controller.update_status(event_id, participant_id, new_status)
+            if success:
+                status_messages = {
+                    'confirmado': 'confirmada',
+                    'cancelado': 'cancelada',
+                    'pendiente': 'marcada como pendiente'
+                }
+                message = f"Inscripción {status_messages.get(new_status, 'actualizada')} correctamente"
+                messagebox.showinfo("Éxito", message)
+                self.load_data()
+                return True
+            else:
+                messagebox.showerror("Error", "No se pudo cambiar el estado de la inscripción")
+                return False
+        except ValueError as e:
+            messagebox.showerror("Error", str(e))
+            return False
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al cambiar el estado: {str(e)}")
+            return False
+    
     def delete_registration(self, event_id: int, participant_id: int):
-        """Elimina una inscripción"""
+        """Elimina una inscripción (solo admin)"""
         if not self.registration_controller:
             messagebox.showwarning("Advertencia", "Modo Demo - No se pueden eliminar inscripciones")
             return
         
-        # Verificar que el usuario solo puede cancelar sus propias inscripciones
-        if not self.is_admin and self.user_participant:
-            if participant_id != self.user_participant.participant_id:
-                messagebox.showerror("Error", "Solo puedes cancelar tus propias inscripciones")
-                return
+        # Solo admin puede eliminar
+        if not self.is_admin:
+            messagebox.showerror("Error", "Solo los administradores pueden eliminar inscripciones")
+            return
         
-        action_text = "cancelar esta inscripción" if not self.is_admin else "eliminar esta inscripción"
         result = messagebox.askyesno(
             "Confirmar",
-            f"¿Estás seguro de que deseas {action_text}?"
+            "¿Estás seguro de que deseas eliminar esta inscripción?\n\n"
+            "Esta acción no se puede deshacer."
         )
         
         if result:
             success = self.registration_controller.unregister_participant(event_id, participant_id)
             if success:
-                message = "Inscripción cancelada correctamente" if not self.is_admin else "Inscripción eliminada correctamente"
-                messagebox.showinfo("Éxito", message)
+                messagebox.showinfo("Éxito", "Inscripción eliminada correctamente")
                 self.load_data()
             else:
                 messagebox.showerror("Error", "No se pudo eliminar la inscripción")

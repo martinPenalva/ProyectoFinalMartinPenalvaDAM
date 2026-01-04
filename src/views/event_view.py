@@ -171,8 +171,8 @@ class EventView:
         
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # Bind doble clic para editar
-        self.tree.bind('<Double-1>', lambda e: self.edit_selected_event())
+        # Bind doble clic para ver detalles
+        self.tree.bind('<Double-1>', lambda e: self.view_selected_event())
         
         # Frame de acciones (botones en cada fila)
         # Nota: En Tkinter, los botones en cada fila requieren un enfoque diferente
@@ -429,11 +429,14 @@ class EventView:
         
         if event:
             if messagebox.askyesno("Confirmar", f"¿Eliminar el evento '{event.title}'?"):
-                if self.event_controller.delete(event.event_id):
-                    messagebox.showinfo("Éxito", "Evento eliminado correctamente")
-                    self.load_events()
-                else:
-                    messagebox.showerror("Error", "No se pudo eliminar el evento")
+                try:
+                    if self.event_controller.delete(event.event_id):
+                        messagebox.showinfo("Éxito", "Evento eliminado correctamente")
+                        self.load_events()
+                    else:
+                        messagebox.showerror("Error", "No se pudo eliminar el evento")
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
     
     def show_new_event_modal(self):
         """Muestra el modal para nuevo evento"""
@@ -637,17 +640,21 @@ class EventView:
                 event.capacity = capacity
                 event.status = status_db
                 
-                if self.event_controller.update(event):
-                    messagebox.showinfo("Éxito", "Evento actualizado correctamente")
+                try:
+                    if self.event_controller.update(event):
+                        messagebox.showinfo("Éxito", "Evento actualizado correctamente")
+                        modal.destroy()
+                        self.load_events()
+                    else:
+                        messagebox.showerror(
+                            "Error de Concurrencia", 
+                            "No se pudo actualizar el evento.\n\n"
+                            "El evento fue modificado por otro usuario mientras lo editabas.\n"
+                            "Por favor, recarga el evento y vuelve a intentar con los datos actualizados."
+                        )
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
                     modal.destroy()
-                    self.load_events()
-                else:
-                    messagebox.showerror(
-                        "Error de Concurrencia", 
-                        "No se pudo actualizar el evento.\n\n"
-                        "El evento fue modificado por otro usuario mientras lo editabas.\n"
-                        "Por favor, recarga el evento y vuelve a intentar con los datos actualizados."
-                    )
             else:
                 new_event = Event(
                     title=title,
@@ -659,14 +666,20 @@ class EventView:
                     status=status_db
                 )
                 
-                event_id = self.event_controller.create(new_event)
-                if event_id:
-                    messagebox.showinfo("Éxito", "Evento creado correctamente")
+                try:
+                    event_id = self.event_controller.create(new_event)
+                    if event_id:
+                        messagebox.showinfo("Éxito", "Evento creado correctamente")
+                        modal.destroy()
+                        self.load_events()
+                    else:
+                        messagebox.showerror("Error", "No se pudo crear el evento")
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
                     modal.destroy()
-                    self.load_events()
-                else:
-                    messagebox.showerror("Error", "No se pudo crear el evento")
         
+        except PermissionError as e:
+            messagebox.showerror("Permiso denegado", str(e))
         except Exception as e:
             messagebox.showerror("Error", f"Error al guardar: {str(e)}")
     
@@ -780,12 +793,11 @@ class EventView:
             status_color = COLORS['success_text']
             status_bg = COLORS['success']
         
-        # Obtener número de inscritos
+        # Obtener número de inscritos confirmados (las canceladas no cuentan)
         num_registered = 0
         if self.registration_controller:
             try:
-                registrations = self.registration_controller.get_event_participants(event.event_id)
-                num_registered = len(registrations) if registrations else 0
+                num_registered = self.registration_controller.count_confirmed_registrations(event.event_id)
             except:
                 pass
         
@@ -850,12 +862,36 @@ class EventView:
                 )
             value_label.pack(anchor=tk.W, fill=tk.X)
         
+        # Botones de acción
+        buttons_frame = tk.Frame(content, bg=COLORS['white'])
+        buttons_frame.pack(pady=(20, 0))
+        
+        # Botón Editar (solo para admin)
+        if self.is_admin:
+            def edit_and_close():
+                modal.destroy()
+                self.show_event_modal(event)
+            
+            btn_edit = tk.Button(
+                buttons_frame,
+                text="✏️ Editar",
+                font=("Arial", 10, "bold"),
+                bg=COLORS['primary'],
+                fg="white",
+                relief=tk.FLAT,
+                cursor="hand2",
+                padx=24,
+                pady=10,
+                command=edit_and_close
+            )
+            btn_edit.pack(side=tk.LEFT, padx=(0, 10))
+        
         # Botón cerrar
         btn_close = tk.Button(
-            content,
+            buttons_frame,
             text="Cerrar",
             font=("Arial", 10, "bold"),
-            bg=COLORS['primary'],
+            bg=COLORS['text_secondary'] if self.is_admin else COLORS['primary'],
             fg="white",
             relief=tk.FLAT,
             cursor="hand2",
@@ -863,7 +899,7 @@ class EventView:
             pady=10,
             command=modal.destroy
         )
-        btn_close.pack(pady=(20, 0))
+        btn_close.pack(side=tk.LEFT)
         
         # Actualizar scroll después de crear widgets
         modal.after(100, lambda: canvas.configure(scrollregion=canvas.bbox("all")))

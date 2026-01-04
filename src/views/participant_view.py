@@ -119,8 +119,8 @@ class ParticipantView:
         
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        # Bind doble clic para editar
-        self.tree.bind('<Double-1>', lambda e: self.edit_selected_participant())
+        # Bind doble clic para ver detalles
+        self.tree.bind('<Double-1>', lambda e: self.view_selected_participant())
         
         # Botones de acción globales
         actions_frame = tk.Frame(table_container, bg=COLORS['table_header'])
@@ -389,14 +389,17 @@ class ParticipantView:
         info_frame = tk.Frame(content, bg=COLORS['white'])
         info_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Obtener eventos del participante
+        # Obtener eventos del participante (excluyendo cancelados)
         num_events = 0
         events_list = []
         if self.registration_controller:
             try:
-                events = self.registration_controller.get_participant_events(participant.participant_id)
-                num_events = len(events) if events else 0
-                events_list = events[:15]  # Primeros 15 eventos
+                all_events = self.registration_controller.get_participant_events(participant.participant_id)
+                # Filtrar eventos cancelados - solo mostrar confirmados y pendientes
+                if all_events:
+                    events = [e for e in all_events if e.get('registration_status', 'confirmado').lower() != 'cancelado']
+                    num_events = len(events) if events else 0
+                    events_list = events[:15]  # Primeros 15 eventos
             except:
                 pass
         
@@ -493,12 +496,36 @@ class ParticipantView:
                 )
                 more_label.pack(anchor=tk.W)
         
+        # Botones de acción
+        buttons_frame = tk.Frame(content, bg=COLORS['white'])
+        buttons_frame.pack(pady=(20, 0))
+        
+        # Botón Editar (solo para admin)
+        if self.is_admin:
+            def edit_and_close():
+                modal.destroy()
+                self.show_participant_modal(participant)
+            
+            btn_edit = tk.Button(
+                buttons_frame,
+                text="✏️ Editar",
+                font=("Arial", 10, "bold"),
+                bg=COLORS['primary'],
+                fg="white",
+                relief=tk.FLAT,
+                cursor="hand2",
+                padx=24,
+                pady=10,
+                command=edit_and_close
+            )
+            btn_edit.pack(side=tk.LEFT, padx=(0, 10))
+        
         # Botón cerrar
         btn_close = tk.Button(
-            content,
+            buttons_frame,
             text="Cerrar",
             font=("Arial", 10, "bold"),
-            bg=COLORS['primary'],
+            bg=COLORS['text_secondary'] if self.is_admin else COLORS['primary'],
             fg="white",
             relief=tk.FLAT,
             cursor="hand2",
@@ -506,7 +533,7 @@ class ParticipantView:
             pady=10,
             command=modal.destroy
         )
-        btn_close.pack(pady=(20, 0))
+        btn_close.pack(side=tk.LEFT)
         
         # Actualizar scroll después de crear widgets
         modal.after(100, lambda: canvas.configure(scrollregion=canvas.bbox("all")))
@@ -542,11 +569,14 @@ class ParticipantView:
         
         if participant:
             if messagebox.askyesno("Confirmar", f"¿Eliminar el participante '{participant.full_name}'?"):
-                if self.participant_controller.delete(participant_id):
-                    messagebox.showinfo("Éxito", "Participante eliminado correctamente")
-                    self.load_participants()
-                else:
-                    messagebox.showerror("Error", "No se pudo eliminar el participante")
+                try:
+                    if self.participant_controller.delete(participant_id):
+                        messagebox.showinfo("Éxito", "Participante eliminado correctamente")
+                        self.load_participants()
+                    else:
+                        messagebox.showerror("Error", "No se pudo eliminar el participante")
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
     
     def show_new_participant_modal(self):
         """Muestra el modal para nuevo participante"""
@@ -708,12 +738,16 @@ class ParticipantView:
                 participant.phone = phone
                 participant.identifier = identifier
                 
-                if self.participant_controller.update(participant):
-                    messagebox.showinfo("Éxito", "Participante actualizado correctamente")
+                try:
+                    if self.participant_controller.update(participant):
+                        messagebox.showinfo("Éxito", "Participante actualizado correctamente")
+                        modal.destroy()
+                        self.load_participants()
+                    else:
+                        messagebox.showerror("Error", "No se pudo actualizar el participante")
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
                     modal.destroy()
-                    self.load_participants()
-                else:
-                    messagebox.showerror("Error", "No se pudo actualizar el participante")
             else:
                 new_participant = Participant(
                     first_name=first_name,
@@ -723,14 +757,20 @@ class ParticipantView:
                     identifier=identifier
                 )
                 
-                participant_id = self.participant_controller.create(new_participant)
-                if participant_id:
-                    messagebox.showinfo("Éxito", "Participante creado correctamente")
+                try:
+                    participant_id = self.participant_controller.create(new_participant)
+                    if participant_id:
+                        messagebox.showinfo("Éxito", "Participante creado correctamente")
+                        modal.destroy()
+                        self.load_participants()
+                    else:
+                        messagebox.showerror("Error", "No se pudo crear el participante")
+                except PermissionError as e:
+                    messagebox.showerror("Permiso denegado", str(e))
                     modal.destroy()
-                    self.load_participants()
-                else:
-                    messagebox.showerror("Error", "No se pudo crear el participante")
         
+        except PermissionError as e:
+            messagebox.showerror("Permiso denegado", str(e))
         except Exception as e:
             messagebox.showerror("Error", f"Error al guardar: {str(e)}")
     

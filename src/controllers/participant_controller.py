@@ -12,11 +12,41 @@ from typing import List, Optional
 class ParticipantController:
     """Controlador para operaciones CRUD de participantes"""
     
-    def __init__(self, db: DatabaseConnection):
+    def __init__(self, db: DatabaseConnection, user_role: str = 'user'):
+        """
+        Inicializa el controlador de participantes
+        
+        Args:
+            db: Conexión a la base de datos
+            user_role: Rol del usuario ('admin' o 'user'). Solo admin puede modificar participantes.
+        """
         self.db = db
+        self.user_role = user_role
+        self.is_admin = (user_role == 'admin')
+    
+    def _check_admin_permission(self) -> bool:
+        """
+        Verifica si el usuario actual tiene permisos de administrador
+        
+        Returns:
+            True si es admin, False en caso contrario
+        
+        Raises:
+            PermissionError: Si el usuario no es admin
+        """
+        if not self.is_admin:
+            raise PermissionError("Solo los administradores pueden modificar participantes")
+        return True
     
     def create(self, participant: Participant) -> Optional[int]:
-        """Crea un nuevo participante"""
+        """
+        Crea un nuevo participante
+        Solo los administradores pueden crear participantes
+        
+        Raises:
+            PermissionError: Si el usuario no es administrador
+        """
+        self._check_admin_permission()
         conn = None
         try:
             conn = self.db.get_connection()
@@ -91,7 +121,14 @@ class ParticipantController:
                 conn.close()
     
     def update(self, participant: Participant) -> bool:
-        """Actualiza un participante"""
+        """
+        Actualiza un participante
+        Solo los administradores pueden actualizar participantes
+        
+        Raises:
+            PermissionError: Si el usuario no es administrador
+        """
+        self._check_admin_permission()
         conn = None
         try:
             conn = self.db.get_connection()
@@ -126,7 +163,14 @@ class ParticipantController:
                 conn.close()
     
     def delete(self, participant_id: int) -> bool:
-        """Elimina un participante"""
+        """
+        Elimina un participante
+        Solo los administradores pueden eliminar participantes
+        
+        Raises:
+            PermissionError: Si el usuario no es administrador
+        """
+        self._check_admin_permission()
         conn = None
         try:
             conn = self.db.get_connection()

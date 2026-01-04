@@ -47,8 +47,8 @@ class MainWindow:
         # Controladores (solo si hay base de datos)
         if db is not None and hasattr(db, 'pool') and db.pool:  # Verificar que el pool existe
             try:
-                self.event_controller = EventController(db)
-                self.participant_controller = ParticipantController(db)
+                self.event_controller = EventController(db, user_role=self.user_role)
+                self.participant_controller = ParticipantController(db, user_role=self.user_role)
                 self.registration_controller = RegistrationController(db)
                 self.user_controller = UserController(db)
             except Exception as e:
@@ -517,11 +517,10 @@ class MainWindow:
                     row_frame = tk.Frame(table_frame, bg=COLORS['white'] if i % 2 == 0 else COLORS['table_row_even'])
                     row_frame.pack(fill=tk.X)
                     
-                    # Obtener número de inscritos
+                    # Obtener número de inscritos confirmados (las canceladas no cuentan)
                     try:
                         if self.registration_controller:
-                            registrations = self.registration_controller.get_event_participants(event.event_id)
-                            num_registered = len(registrations)
+                            num_registered = self.registration_controller.count_confirmed_registrations(event.event_id)
                         else:
                             num_registered = 0
                     except:
