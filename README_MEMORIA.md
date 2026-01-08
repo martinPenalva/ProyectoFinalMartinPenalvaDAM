@@ -83,7 +83,7 @@ Python ha sido fundamental para el desarrollo de este proyecto. Desde las etapas
 **Características principales:**
 - **Lenguaje de Programación:** Python 3.8+ se ha utilizado como lenguaje principal para el desarrollo de toda la aplicación, aprovechando sus características de programación orientada a objetos, tipado dinámico y sintaxis clara y legible.
 
-![Logotipo de Python](PROYECTO_FINAL_IMAGENES/logotipo_python.png)
+<img src="PROYECTO_FINAL_IMAGENES/logotipo_python.png" alt="Logotipo de Python" width="200"/>
 *Figura: Logotipo oficial de Python*
 
 - **Edición de Código:** Se ha utilizado Visual Studio Code como editor principal, proporcionando funciones avanzadas como resaltado de sintaxis, completado automático, depuración integrada y gestión de extensiones.
@@ -100,7 +100,7 @@ Tkinter se ha utilizado como framework para el desarrollo de la interfaz gráfic
 **Características principales:**
 - **Interfaz Gráfica Nativa:** Tkinter es la biblioteca estándar de Python para desarrollo de interfaces gráficas, lo que nos ha permitido crear ventanas, formularios, tablas y componentes interactivos sin necesidad de dependencias externas adicionales.
 
-![Logotipo Tkinter](PROYECTO_FINAL_IMAGENES/logotipo_thinker.png)
+<img src="PROYECTO_FINAL_IMAGENES/logotipo_thinker.png" alt="Logotipo Tkinter" width="200"/>
 *Figura: Logotipo de Tkinter*
 
 - **Diseño de Ventanas:** Tkinter proporciona un conjunto completo de widgets (botones, etiquetas, campos de texto, tablas, etc.) que hemos utilizado para diseñar una interfaz intuitiva y funcional.
@@ -110,7 +110,7 @@ Tkinter se ha utilizado como framework para el desarrollo de la interfaz gráfic
 
 MySQL ha sido utilizado como sistema de gestión de bases de datos relacionales (RDBMS) para almacenar toda la información de la aplicación, incluyendo usuarios, eventos, participantes e inscripciones.
 
-![Logotipo de MySQL](PROYECTO_FINAL_IMAGENES/logotipo_MYSQL.png)
+<img src="PROYECTO_FINAL_IMAGENES/logotipo_MYSQL.png" alt="Logotipo de MySQL" width="200"/>
 *Figura: Logotipo oficial de MySQL*
 
 **Características principales:**
@@ -162,11 +162,15 @@ MySQL Connector Python ha sido la librería utilizada para establecer la comunic
 
 bcrypt ha sido utilizado para el hash seguro de contraseñas de usuarios, garantizando que las contraseñas nunca se almacenen en texto plano en la base de datos.
 
-![Logotipo de bcrypt](PROYECTO_FINAL_IMAGENES/logo_bcrypt.png)
+<img src="PROYECTO_FINAL_IMAGENES/logo_bcrypt.png" alt="Logotipo de bcrypt" width="200"/>
 *Figura: Logotipo de bcrypt*
 
 **Características principales:**
 - **Hash Seguro de Contraseñas:** bcrypt implementa el algoritmo bcrypt, un algoritmo de hash criptográfico diseñado específicamente para contraseñas, que incluye salting automático y es resistente a ataques de fuerza bruta.
+
+![Implementación de Autenticación con bcrypt](PROYECTO_FINAL_IMAGENES/Implementación de Autenticación con bcrypt.png)
+*Figura: Implementación de hash de contraseñas con bcrypt*
+
 - **Verificación de Contraseñas:** bcrypt nos ha permitido verificar contraseñas de manera segura comparando el hash almacenado con el hash de la contraseña introducida, sin necesidad de almacenar la contraseña en texto plano.
 - **Seguridad:** El uso de bcrypt garantiza que incluso si la base de datos es comprometida, las contraseñas no pueden ser recuperadas fácilmente, ya que el algoritmo es unidireccional y computacionalmente costoso de revertir.
 
@@ -174,7 +178,7 @@ bcrypt ha sido utilizado para el hash seguro de contraseñas de usuarios, garant
 
 ReportLab ha sido utilizado para la generación de documentos PDF a partir de los datos de la aplicación, permitiendo exportar eventos, participantes e inscripciones en formato PDF.
 
-![Logotipo de ReportLab](PROYECTO_FINAL_IMAGENES/logotipo_reportlab.png)
+<img src="PROYECTO_FINAL_IMAGENES/logotipo_reportlab.png" alt="Logotipo de ReportLab" width="200"/>
 *Figura: Logotipo de ReportLab*
 
 **Características principales:**
@@ -191,6 +195,10 @@ python-dotenv ha sido utilizado para la gestión de configuración mediante vari
 
 **Características principales:**
 - **Gestión de Configuración:** python-dotenv nos ha permitido almacenar configuraciones sensibles como credenciales de base de datos, puertos y otros parámetros en un archivo `.env` separado del código fuente.
+
+![Ejemplo de python-dotenv](PROYECTO_FINAL_IMAGENES/dotenv_python.png)
+*Figura: Ejemplo de uso de python-dotenv para cargar variables de entorno*
+
 - **Seguridad:** El uso de variables de entorno mediante python-dotenv garantiza que las credenciales no se expongan en el código fuente, mejorando la seguridad de la aplicación.
 - **Flexibilidad:** python-dotenv nos ha permitido tener diferentes configuraciones para desarrollo, pruebas y producción sin modificar el código fuente.
 
@@ -201,8 +209,15 @@ python-dotenv ha sido utilizado para la gestión de configuración mediante vari
 
 GitHub se ha utilizado como plataforma de control de versiones para almacenar y gestionar el código fuente del proyecto. Git, como sistema de control de versiones, nos ha permitido realizar un seguimiento de los cambios en el código y revertir a versiones anteriores en caso necesario.
 
+<img src="PROYECTO_FINAL_IMAGENES/logo_Github.png" alt="Logotipo de GitHub" width="200"/>
+*Figura: Logotipo de GitHub*
+
 **Características principales:**
 - **Control de Versiones:** Utilizamos Git para mantener un historial completo de cambios en el código fuente, lo que nos permite mantener un registro de todas las modificaciones realizadas y colaborar de manera eficiente.
+
+![Commits en GitHub](PROYECTO_FINAL_IMAGENES/commits_github.png)
+*Figura: Historial de commits del proyecto en GitHub*
+
 - **Colaboración y Gestión de Proyectos:** GitHub proporciona herramientas para la gestión de proyectos, seguimiento de problemas y documentación, lo que ha facilitado el proceso de desarrollo del proyecto.
 
 ### 2.2. Hardware
@@ -285,11 +300,17 @@ Durante esta fase inicial, me centré en diseñar la ventana de login, la cual e
 ![Ventana de Login](PROYECTO_FINAL_IMAGENES/login.png)
 *Figura: Ventana de login de la aplicación en ejecución*
 
+![Método handle_login](PROYECTO_FINAL_IMAGENES/handle_login_1.png)
+*Figura: Método handle_login() que valida las credenciales del usuario*
+
 ![Método start](PROYECTO_FINAL_IMAGENES/metodo_start.png)
 *Figura: Método start() que inicia la aplicación mostrando la ventana de login*
 
 ![Método on_login_success](PROYECTO_FINAL_IMAGENES/on_login_success___1.png)
 *Figura: Método on_login_success() que gestiona el acceso tras el login exitoso*
+
+![Código de AuthController](PROYECTO_FINAL_IMAGENES/Código de AuthController.png)
+*Figura: Implementación completa del AuthController con métodos de autenticación*
 
 ![Ventana de Registro](PROYECTO_FINAL_IMAGENES/registrarse.png)
 *Figura: Ventana de registro de nuevos usuarios*
@@ -300,6 +321,12 @@ Después de definir la ventana de login, se procedió al diseño de la ventana p
 
 ![Vista de Inicio](PROYECTO_FINAL_IMAGENES/pantalla_unaveziniciado.png)
 *Figura: Vista de inicio de la aplicación mostrando el resumen general y estadísticas*
+
+![Método create_sidebar](PROYECTO_FINAL_IMAGENES/create_sidebar.png)
+*Figura: Método create_sidebar() que crea el menú lateral de navegación*
+
+![Método show_home](PROYECTO_FINAL_IMAGENES/show_home.png)
+*Figura: Método show_home() que muestra la vista de inicio con estadísticas*
 
 ![Método setup_icon](PROYECTO_FINAL_IMAGENES/setup_icon.png)
 *Figura: Método setup_icon() que configura el icono de la aplicación*
@@ -330,6 +357,9 @@ Se desarrolló la vista completa de gestión de eventos, permitiendo crear, edit
 ![Vista de Eventos](PROYECTO_FINAL_IMAGENES/eventos_view.png)
 *Figura: Vista de gestión de eventos mostrando la tabla de eventos y opciones de acción*
 
+![Método create_widgets de EventView](PROYECTO_FINAL_IMAGENES/create_widgets.png)
+*Figura: Método create_widgets() de EventView que crea los componentes de la interfaz*
+
 #### Etapa 5: Vista de Gestión de Participantes
 
 Se implementó la vista de gestión de participantes, que permite administrar toda la información de los participantes del sistema.
@@ -337,12 +367,18 @@ Se implementó la vista de gestión de participantes, que permite administrar to
 ![Vista de Participantes](PROYECTO_FINAL_IMAGENES/participantes_view.png)
 *Figura: Vista de gestión de participantes mostrando la tabla con todos los participantes*
 
+![Método create_widgets de ParticipantView](PROYECTO_FINAL_IMAGENES/create_widgets_participantes.png)
+*Figura: Método create_widgets() de ParticipantView que crea los componentes de la interfaz*
+
 #### Etapa 6: Vista de Inscripciones
 
 Se desarrolló la vista de inscripciones, que permite gestionar las inscripciones de participantes a eventos, con control de aforo y validaciones.
 
 ![Vista de Inscripciones](PROYECTO_FINAL_IMAGENES/incripciones_view.png)
 *Figura: Vista de gestión de inscripciones mostrando las inscripciones activas*
+
+![Método create_widgets de RegistrationView](PROYECTO_FINAL_IMAGENES/create_widgets() de RegistrationView.png)
+*Figura: Método create_widgets() de RegistrationView que crea los componentes de la interfaz*
 
 ![Proceso de Inscripción](PROYECTO_FINAL_IMAGENES/incribirse.png)
 *Figura: Formulario de inscripción de un participante a un evento*
@@ -359,6 +395,12 @@ Se implementó la funcionalidad de exportación de datos a CSV y PDF, permitiend
 
 ![Ventana de Reportes y Exportación](PROYECTO_FINAL_IMAGENES/ventana_reportes_exportar.png)
 *Figura: Vista de reportes mostrando las opciones de exportación a CSV y PDF*
+
+![Código de Exportación a CSV](PROYECTO_FINAL_IMAGENES/Código de Exportación a CSV.png)
+*Figura: Implementación del método export_events() de CSVExporter*
+
+![Código de Exportación a PDF](PROYECTO_FINAL_IMAGENES/Código de Exportación a PDF.png)
+*Figura: Implementación del método export_events() de PDFExporter*
 
 ### 3.3. Fase 3: Implementación de Concurrencia y Optimización
 
@@ -383,13 +425,28 @@ Esta fase se centró en la implementación de un sistema avanzado de gestión de
 
 Se implementó un sistema de control de versiones optimista en la tabla de eventos, añadiendo un campo `version` que se incrementa en cada actualización. Cuando un usuario intenta actualizar un evento, se verifica que la versión no haya cambiado desde que se leyó, rechazando la actualización si otro usuario la ha modificado.
 
+![Control de Versiones Optimista](PROYECTO_FINAL_IMAGENES/Control de Versiones Optimista.png)
+*Figura: Código que implementa el control de versiones optimista en las actualizaciones*
+
+![Código de Control de Concurrencia en EventController](PROYECTO_FINAL_IMAGENES/Código de Control de Concurrencia en EventController.png)
+*Figura: Método _update_internal() completo con control de concurrencia*
+
 #### Etapa 2: Sistema de Locks de Recursos
 
 Se desarrolló un sistema de locks por recurso que permite bloquear recursos específicos (eventos, participantes) de forma independiente. Esto mejora la granularidad del control de concurrencia, permitiendo que diferentes usuarios trabajen en diferentes recursos simultáneamente sin interferencias.
 
+![Código de ResourceLockManager](PROYECTO_FINAL_IMAGENES/Código de ResourceLockManager.png)
+*Figura: Implementación completa de la clase ResourceLockManager*
+
 #### Etapa 3: Bloqueos Transaccionales en Inscripciones
 
 Se implementó el uso de SELECT FOR UPDATE en las operaciones de inscripción para prevenir condiciones de carrera cuando múltiples usuarios intentan inscribirse en un evento con capacidad limitada. Se configuró el nivel de aislamiento REPEATABLE READ para garantizar la consistencia de datos.
+
+![SELECT FOR UPDATE en Inscripciones](PROYECTO_FINAL_IMAGENES/SELECT FOR UPDATE en Inscripciones.png)
+*Figura: SELECT FOR UPDATE que previene condiciones de carrera en inscripciones*
+
+![Código de Registro con Protección de Concurrencia](PROYECTO_FINAL_IMAGENES/Código de Registro con Protección de Concurrencia.png)
+*Figura: Método _register_participant_internal() completo con todas las protecciones de concurrencia*
 
 #### Etapa 4: Procesamiento Paralelo
 
