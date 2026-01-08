@@ -1,0 +1,808 @@
+CENTRO INTEGRADO MARÍA ANA SANZ 
+PAMPLONA 
+2º GRADO SUPERIOR 
+DESARROLLO DE APLICACIONES MULTIPLATAFORMA 
+TRABAJO DE FIN DE GRADO 
+APLICACIÓN MÓVIL EN ANDROID PARA LA BÚSQUEDA DE 
+INFORMACIÓN Y VISUALIZACIÓN DE PELÍCULAS, SERIES Y ELENCO - FLICKFINDER - 
+Autor: XXXXXXXX 
+Tutor/a Académico: XXXXXXXX 
+Tutor/a TFG: XXXXXXXX 
+Pamplona, Mayo de 2024 
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 2 de 42 
+ 
+Contenido 
+ 
+INTRODUCCIÓN ................................................................................................................. 6 
+ 
+1.- OBJETIVOS .................................................................................................................. 8 
+ 
+2.- RECURSOS SOFTWARE Y HARDWARE ....................................................................... 9 
+2.1.- Software ................................................................................................................ 9 
+2.1.1.- Android Studio ............................................................................................... 9 
+2.1.2.- Kotlin ............................................................................................................ 11 
+ 2.1.3.- The Movie DataBase ............................................................................. 13 
+2.1.4.- Kinocheck ..................................................................................................... 14 
+2.1.5.- Postman ....................................................................................................... 15 
+2.1.6.- FireBase ........................................................................................................ 16 
+2.1.7.- Nominalia ..................................................................................................... 17 
+2.1.8.- GitHub y Git .................................................................................................. 18 
+2.2.- Hardware ............................................................................................................ 19 
+2.1.1.- Ordenador de sobremesa ............................................................................ 19 
+2.1.2.- Sistema de doble monitor ............................................................................ 19 
+2.1.3.- Ordenador portátil ....................................................................................... 19 
+ 
+3.- ENUMERACIÓN Y DESARROLLO DE LAS FASES ........................................................ 20 
+3.0.1- Diagrama de Gantt ............................................................................................ 20 
+3.1.- Fase 1: Análisis y Diseño ..................................................................................... 21 
+Fecha de Inicio: 25 de marzo de 2024..................................................................... 21 
+Fecha de Finalización: 7 de abril de 2024 ............................................................... 21 
+Actividades: ............................................................................................................. 21 
+Desarrollo: ............................................................................................................... 21 
+3.2.- Fase 2: Desarrollo Frontend y Backend .............................................................. 22 
+Fecha de Inicio: 8 de abril de 2024.......................................................................... 22 
+Fecha de Finalización: 12 de mayo de 2024 ........................................................... 22 
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 3 de 42 
+ 
+Actividades: ............................................................................................................. 22 
+Desarrollo: ............................................................................................................... 22 
+Fase 3: Lanzamiento y Evaluación .............................................................................. 40 
+Fecha de Inicio: 13 de mayo de 2024 ...................................................................... 40 
+Fecha de Finalización: 17 de mayo de 2024 ........................................................... 40 
+Actividades: ............................................................................................................. 40 
+ 
+CONCLUSIONES .............................................................................................................. 41 
+ 
+BIBLIOGRAFÍAS Y REFERENCIAS .................................................................................... 42 
+Bibliografía ...................................................................................................................... 42 
+ 
+  
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 4 de 42 
+ 
+Índice de Imágenes 
+ 
+Figura 1 - Logotipo de la Aplicación FlickFinder ............................................................................ 7 
+Figura 2 - Logotipo de Android Studio .......................................................................................... 9 
+Figura 3 - Configuración Inicial del Proyecto de Android Studio .................................................. 9 
+Figura 4 - Ejemplo del Editor de Código de Android Studio ........................................................ 10 
+Figura 5 - Ejemplo de Emulador de Dispositivo Android Integrado en Android Studio .............. 10 
+Figura 6 - Logotipo de Kotlin ....................................................................................................... 11 
+Figura 7 - Funcionamiento de la Compatibilidad de Kotlin con Java .......................................... 11 
+Figura 8 - Explicación del Null Safety en Kotlin ........................................................................... 12 
+Figura 9 - Diferencia de Extensión de Código entre Java y Kotlin ............................................... 12 
+Figura 10 - Logotipo de The Movie DataBase ............................................................................. 13 
+Figura 11 - Ejemplo de Consulta a la API de TMDB ..................................................................... 13 
+Figura 12 - Ejemplo de Respuesta de la API de TMDB ................................................................ 13 
+Figura 13 - Banner de KinoCheck ................................................................................................ 14 
+Figura 14 - Captura de Pantalla de la API de KinoCheck ............................................................. 14 
+Figura 15 - Logotipo de Postman ................................................................................................ 15 
+Figura 16 - Captura de Pantalla de las Pruebas de Integración con Postman ............................ 15 
+Figura 17 - Logotipo de Firebase ................................................................................................. 16 
+Figura 18 - Base de Datos Utilizada en el Proyecto ..................................................................... 16 
+Figura 19 - Captura de Pantalla del Dominio Adquirido ............................................................. 17 
+Figura 20 - Logotipo de Git y GitHub ........................................................................................... 18 
+Figura 21 - Repositorio del Proyecto en GitHub ......................................................................... 18 
+Figura 22 - Diseño de Registro e Inicio de Sesión en Figma ........................................................ 21 
+Figura 23 - Código de MainActivity ............................................................................................. 23 
+Figura 24 - Vista de MainActivity ................................................................................................ 23 
+Figura 25 - Código de Inicio ......................................................................................................... 24 
+Figura 26 - Vista de Inicio ............................................................................................................ 24 
+Figura 27 - Código de Navegación entre Fragmentos ................................................................. 25 
+Figura 28 - Vista de Registro ........................................................................................................ 26 
+Figura 29 - Vista de Inicio de Sesión ............................................................................................ 26 
+Figura 30 - Implementación de FireBase en el Proyecto ............................................................ 27 
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 5 de 42 
+ 
+Figura 31 - Configuración de la Aplicación en la Web de FireBase ............................................. 27 
+Figura 32 - Código de Registro con Consulta a FireBase ............................................................. 28 
+Figura 33 - Vista de Detalles de Películas .................................................................................... 29 
+Figura 34 - Código de Detalles de Películas ................................................................................. 30 
+Figura 35 - Vista de Buscar .......................................................................................................... 31 
+Figura 36 - Código de Buscar ....................................................................................................... 32 
+Figura 37 - Vista de Búsqueda ..................................................................................................... 33 
+Figura 38 - Código de Búsqueda .................................................................................................. 33 
+Figura 39 - Código de Perfil ......................................................................................................... 34 
+Figura 40 - Vista de Perfil ............................................................................................................ 34 
+Figura 41 - Código de Favoritos ................................................................................................... 35 
+Figura 42 - Vista de Favoritos ...................................................................................................... 35 
+Figura 43 - Vista de Reproductor de Películas............................................................................. 36 
+Figura 44 - Vista de Reproductor de Tráileres ............................................................................. 36 
+Figura 45 - Vista Landscape de Registro ...................................................................................... 37 
+Figura 46 - Vista Landscape de Detalles de Películas .................................................................. 37 
+Figura 47 - Captura de la Traducción de los Strings al Inglés ...................................................... 38 
+Figura 48 - Captura de los Strings en Español ............................................................................. 38 
+Figura 49 - Captura del Modo Claro de la Aplicación .................................................................. 39 
+Figura 50 - Captura del Modo Oscuro de la Aplicación ............................................................... 39 
+Figura 51 - Vista de Inicio de Sesión en Modo Claro ................................................................... 39 
+Figura 52 - Vista de Inicio de Sesión en Modo Oscuro ................................................................ 39 
+Figura 53 - Captura de la Página Web Promocional .................................................................... 40 
+  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+INTRODUCCIÓN 
+En la actualidad, el crecimiento de las plataformas de vídeo bajo demanda ha generado un 
+contexto en el cual los usuarios disponen de una amplia oferta de contenido audiovisual en 
+forma de series y películas. Este escenario, caracterizado por una competencia intensa entre las 
+distintas plataformas, plantea un desafío para los espectadores, quienes se enfrentan a la 
+dificultad de localizar el contenido deseado. Esto se debe a que este contenido se encuentra 
+disperso entre múltiples servicios y su disponibilidad puede variar debido a la dinámica 
+competitiva de la industria. 
+En respuesta a esta competencia, los principales líderes del mercado, como Netflix, HBO y 
+Amazon Prime, están realizando inversiones significativas en la producción de contenido original 
+con el objetivo de retener a los usuarios en sus plataformas. Asimismo, se observa la emergencia 
+de nuevos competidores, incluyendo tanto a productoras establecidas, como a empresas de 
+televisión tradicionales, muestra de ello es el lanzamiento de servicios como Disney+, Filmin, 
+Apple TV, ESPN, FlixOlé etc. 
+En el contexto nacional, se ha observado un fenómeno similar, con la aparición de diversas 
+plataformas que ofrecen contenido audiovisual, desde los gigantes estadounidenses como 
+Netflix, HBO, Amazon y Disney hasta las cadenas de televisión nacionales como Atresmedia con 
+ATRESplayer, Mediaset con Mitele y Movistar con Movistar Plus. 
+El mercado global de servicios de vídeo bajo demanda ha experimentado un crecimiento 
+explosivo en los últimos años. Según Statista, el número de suscripciones a estos servicios 
+superó los 1.1 mil millones en 2023. Sin embargo, como hemos comentado anteriormente, la 
+abundancia de opciones crea un desafío significativo para los consumidores, quienes a menudo 
+se sienten abrumados al intentar localizar y gestionar sus preferencias a través de múltiples 
+servicios. Estudios recientes muestran que los usuarios pasan un promedio de 7 a 10 minutos 
+buscando qué ver antes de decidirse, lo que indica una clara necesidad de herramientas que 
+faciliten la navegación y la gestión del contenido.  
+En este contexto, FlickFinder emerge como una solución integral que no solo centraliza la 
+información de series y películas, sino que también mejora la experiencia del usuario al ofrecer 
+una plataforma unificada para acceder a todo el contenido deseado. La aplicación ofrecerá 
+funcionalidades como sinopsis de películas, detalles sobre el elenco, acceso a tráileres, 
+información específica sobre temporadas o episodios de series, y la posibilidad de crear una lista 
+de favoritos para un acceso rápido al contenido deseado, incluyendo la opción de reproducir 
+películas directamente desde la aplicación. 
+Página 6 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Para llevar a cabo este proyecto, se ha empleado la tecnología actual más avanzada, con un 
+enfoque en el lenguaje de programación Kotlin para el desarrollo de la aplicación. Además, se 
+ha integrado un backend basado en Firebase de Google para la gestión de la autenticación de 
+usuarios (tanto con usuario y contraseña cifrada, como directamente con Gmail), la base de 
+datos y el almacenamiento de imágenes. Para obtener información sobre películas, series y 
+elenco, se han utilizado Apis como The Movie DataBase, para la información general y Kinocheck 
+para acceder a tráileres oficiales. Además, se ha establecido comunicación con un servidor 
+alojado en un hosting web personal, para la obtención del contenido que los usuarios desean 
+consumir. 
+En el desarrollo de la aplicación, se han empleado librerías modernas y ampliamente utilizadas 
+por la comunidad de desarrolladores de aplicaciones Android, como Retrofit, Exoplayer, Gson y 
+Glide, con el fin de garantizar un rendimiento óptimo y una experiencia de usuario satisfactoria. 
+Figura 1 - Logotipo de la Aplicación FlickFinder 
+Página 7 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+1.- OBJETIVOS 
+Debido a lo comentado anteriormente, he decidido emprender el desarrollo de una aplicación 
+móvil para dispositivos Android. Esta aplicación tiene como objetivo brindar al usuario acceso 
+integral a información detallada sobre una amplia gama de series y películas, así como detalles 
+sobre el elenco asociado. Entre las características destacadas se incluyen: datos sobre el reparto, 
+información sobre episodios, valoraciones, enlaces a páginas oficiales y tráileres, junto con la 
+capacidad de disfrutar de las películas completas. Además, se incorporará la funcionalidad de 
+seguimiento de contenido, permitiendo a los usuarios agregar elementos de interés a una lista 
+de favoritos para un acceso rápido en cualquier momento. 
+El propósito fundamental de este Trabajo de Fin de Grado es profundizar en el desarrollo de 
+aplicaciones móviles y explorar el uso de nuevos lenguajes en auge, como Kotlin. Asimismo, se 
+pretende poner en práctica diversos conceptos adquiridos durante el curso de mi formación en 
+grado superior de informática. A través de este proyecto, se espera adquirir experiencia en el 
+uso de herramientas como Firebase de Google, un servicio de Backend (BaaS “Backend as a 
+Service”), así como la gestión de un hosting propio. Esta oportunidad de aprendizaje me 
+permitirá familiarizarme con tecnologías ampliamente empleadas por desarrolladores en todo 
+el mundo. 
+Página 8 de 42 
+FlickFinder  
+2.1.- Software 
+2.1.1.- Android Studio 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+2.- RECURSOS SOFTWARE Y HARDWARE 
+Android Studio ha sido fundamental para el desarrollo de este proyecto. Desde 
+las etapas iniciales, hemos empleado esta plataforma, empezando con la 
+configuración del proyecto, hasta su implementación y pruebas. Su interfaz 
+intuitiva y las herramientas integradas, como el emulador de dispositivos 
+virtuales y el editor de diseño de interfaces de usuario, han sido esenciales para 
+agilizar el proceso de desarrollo. Además de su elección por su soporte oficial 
+por parte de Google. 
+Figura 2 - Logotipo de Android Studio 
+⮚ Configuración del Proyecto: Android Studio nos permitió crear un 
+nuevo proyecto de aplicación Android, establecer la estructura de 
+archivos y configurar las dependencias necesarias para el desarrollo. 
+Figura 3 - Configuración Inicial del Proyecto de Android Studio 
+Página 9 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+⮚ Edición de Código: El editor de código de Android Studio proporciona 
+funciones avanzadas, como resaltado de sintaxis, completado 
+automático y refactorización de código, que han facilitado la escritura y 
+modificación del código fuente de la aplicación. 
+Figura 4 - Ejemplo del Editor de Código de Android Studio 
+⮚ Emulador de Dispositivos Virtuales: Durante el desarrollo, hemos 
+utilizado el emulador de Android Studio para probar la aplicación en 
+diferentes dispositivos y versiones de Android, lo que nos ha permitido 
+identificar y solucionar problemas de compatibilidad. 
+Figura 5 - Ejemplo de Emulador de Dispositivo Android Integrado en Android Studio 
+Página 10 de 42 
+FlickFinder  
+2.1.2.- Kotlin 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Kotlin se ha utilizado como lenguaje de programación para el desarrollo de la 
+aplicación, ya que es el lenguaje oficial para el desarrollo en Android. Esta 
+decisión se basa en las ventajas que nos ofrece Kotlin en términos de rapidez, 
+seguridad e interoperabilidad con Java. 
+Figura 6 - Logotipo de Kotlin 
+⮚ Interoperabilidad con Java: Kotlin es totalmente compatible con el 
+código Java existente, lo que nos ha permitido aprovechar bibliotecas y 
+recursos de código abierto disponibles en el ecosistema de Java para 
+Android. 
+Figura 7 - Funcionamiento de la Compatibilidad de Kotlin con Java 
+Página 11 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+⮚ Null Safety: La característica de null safety de Kotlin nos ha ayudado a 
+reducir los errores relacionados con el manejo de valores nulos, lo que 
+ha mejorado la estabilidad y fiabilidad de la aplicación. 
+Figura 8 - Explicación del Null Safety en Kotlin 
+⮚ Claridad: Kotlin se destaca por su sintaxis concisa, lo que me ha 
+permitido escribir menos líneas de código para lograr la misma 
+funcionalidad que hubiésemos conseguido en Java. Esto ha facilitado la 
+lectura y mantenimiento del código, reduciendo los errores y 
+mejorando la productividad. 
+Figura 9 - Diferencia de Extensión de Código entre Java y Kotlin 
+Página 12 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+2.1.3.- The Movie DataBase 
+The Movie DataBase (TMDb) ha sido una 
+fuente incalculable de información sobre 
+películas, series y actores para nuestro 
+proyecto. Hemos utilizado la API pública de 
+TMDb para obtener detalles como sinopsis, 
+reparto y valoraciones de películas y series. 
+Figura 10 - Logotipo de The Movie 
+DataBase 
+⮚ Consulta de Información de Películas y Series: A través de la API de 
+TMDb, hemos realizado consultas 
+para obtener detalles específicos 
+sobre películas y series, como el 
+título, la sinopsis y el reparto. 
+Figura 11 - Ejemplo de Consulta a la API de TMDB Figura 12 - Ejemplo de Respuesta de la API de TMDB 
+⮚ Integración de Datos en la 
+Aplicación: La información obtenida 
+de TMDb se ha integrado en la 
+aplicación para proporcionar a los 
+usuarios una experiencia completa al 
+explorar y descubrir el contenido. 
+Figura 12 - Integración de Consultas en el Proyecto 
+Página 13 de 42 
+FlickFinder  
+2.1.4.- Kinocheck 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Kinocheck ha sido otra fuente importante, ya que nos ha proporcionado los 
+tráileres de películas y series para nuestra aplicación. Hemos utilizado la API de 
+Kinocheck para acceder a estos tráileres y proporcionar a los usuarios una vista 
+previa del contenido disponible. 
+Figura 13 - Banner de KinoCheck 
+⮚ Obtención de Tráileres Oficiales: Mediante consultas a la API de 
+Kinocheck, hemos obtenido enlaces a tráileres oficiales de películas y 
+series, que luego hemos integrado en la aplicación para que los usuarios 
+puedan ver avances antes de decidir qué contenido ver. 
+Figura 14 - Captura de Pantalla de la API de KinoCheck 
+⮚ Mejora de la Experiencia del Usuario: La inclusión de tráileres oficiales 
+de Kinocheck en la aplicación ha mejorado la experiencia del usuario al 
+proporcionar una vista previa visualmente atractiva y convincente del 
+contenido disponible.  
+Página 14 de 42 
+FlickFinder  
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 15 de 42 
+ 
+2.1.5.- Postman 
+Postman ha sido una herramienta esencial para probar y depurar las API 
+utilizadas en el proyecto. Nos ha permitido enviar solicitudes HTTP y analizar 
+respuestas para garantizar el correcto funcionamiento de las interacciones entre 
+nuestra aplicación y los servicios externos. 
+ 
+ 
+⮚ Pruebas de Integración de Apis: Utilizamos Postman para realizar 
+pruebas exhaustivas de las API de TMDb y Kinocheck, asegurándonos de 
+que nuestra aplicación pueda comunicarse de manera efectiva con 
+estos servicios y manejar adecuadamente los datos recibidos. 
+ 
+⮚ Depuración de Solicitudes y Respuestas: La interfaz intuitiva de 
+Postman nos ha permitido depurar fácilmente las solicitudes y 
+respuestas HTTP, identificando y solucionando problemas de 
+comunicación, como errores de autenticación o problemas de formato 
+de datos. 
+Figura 15 - Logotipo de Postman 
+Figura 16 - Captura de Pantalla de las Pruebas de Integración con Postman 
+2.1.6.- FireBase 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Firebase de Google ha sido utilizado como plataforma backend para gestionar la 
+autenticación de usuarios, almacenar datos relacionados con la aplicación y 
+alojar imágenes de perfil de los usuarios registrados. 
+Figura 17 - Logotipo de Firebase 
+⮚ Autenticación de Usuarios: Firebase Authentication se ha integrado en 
+la aplicación para permitir que los usuarios creen cuentas, inicien sesión 
+de manera segura y accedan a contenido personalizado. 
+Figura 18 - Métodos de Autenticación en el Proyecto 
+⮚ Almacenamiento de Datos: Utilizamos Firebase Database para 
+almacenar y solicitar datos entre los clientes registrados y la aplicación, 
+lo que nos permite ofrecer una experiencia de usuario fluida y 
+actualizada. 
+Figura 18 - Base de Datos Utilizada en el Proyecto 
+⮚ Almacenamiento de Imágenes: Firebase Storage se ha utilizado para 
+almacenar imágenes de los perfiles de usuario, asegurando un acceso 
+rápido y fiable a los recursos. 
+Página 16 de 42 
+FlickFinder  
+2.1.7.- Nominalia 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Nominalia es un proveedor de servicios de registro de dominios y alojamiento 
+web utilizado en el proyecto para registrar el nombre de dominio y alojar el 
+servidor de archivos de vídeo. 
+Figura 20 - Logotipo de Nominalia 
+⮚ Registro de Dominio: Utilizamos Nominalia para registrar el nombre de 
+dominio de nuestra aplicación móvil, proporcionando una dirección 
+web única y reconocible para nuestros usuarios. 
+Figura 19 - Captura de Pantalla del Dominio Adquirido 
+⮚ Servicios de Alojamiento Web: Nominalia nos ha proporcionado 
+servicios de alojamiento web para alojar un sitio web, el cual hemos 
+utilizado como espacio de almacenamiento en servidores seguros y 
+confiables, garantizando la disponibilidad y accesibilidad en línea. 
+Página 17 de 42 
+FlickFinder  
+ 
+ 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+ 
+FlickFinder  Página 18 de 42 
+ 
+ 2.1.8.- GitHub y Git 
+GitHub se ha utilizado como plataforma de control de versiones para almacenar 
+y gestionar el código fuente del proyecto. Git, como sistema de control de 
+versiones, nos ha permitido realizar un seguimiento de los cambios en el código 
+y revertir a versiones anteriores en caso necesario. 
+ 
+⮚ Control de Versiones: Utilizamos Git para mantener un historial 
+completo de cambios en el código fuente, lo que nos permite mantener 
+un registro de todas las modificaciones realizadas. 
+⮚ Colaboración y Gestión de Proyectos: GitHub proporciona 
+herramientas para la gestión de proyectos, seguimiento de problemas, 
+lo que ha facilitado el proceso de desarrollo del proyecto. 
+ 
+Figura 21 - Repositorio del Proyecto en GitHub 
+  
+Figura 20 - Logotipo de Git y GitHub 
+2.2.- Hardware 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+2.1.1.- Ordenador de sobremesa 
+El ordenador de sobremesa ha sido el principal entorno de desarrollo utilizado 
+para el proyecto. Su potencia de procesamiento y memoria RAM han permitido 
+ejecutar Android Studio y otras herramientas de desarrollo de manera eficiente. 
+⮚ Especificaciones del Equipo: El ordenador de sobremesa cuenta con un 
+procesador Ryzen 5 5600x de 6 núcleos y 12 hilos, 32GB de RAM y tres 
+discos SSD y un disco duro HDD haciendo una capacidad de 4TB para 
+almacenar el proyecto y recursos de desarrollo. 
+⮚ Configuración del Entorno de Desarrollo: Android Studio, emuladores 
+de dispositivos virtuales y otras herramientas de desarrollo se han 
+instalado y configurado en el ordenador de sobremesa para crear un 
+entorno de desarrollo cómodo y productivo. 
+2.1.2.- Sistema de doble monitor 
+El sistema de doble monitor ha mejorado la productividad del desarrollo al 
+proporcionar más espacio de pantalla para trabajar simultáneamente en código, 
+documentación y herramientas de desarrollo. 
+⮚ Configuración del Sistema de Doble Monitor: Dos monitores de alta 
+resolución (1920 x 1080) se han conectado al ordenador de sobremesa para 
+crear un espacio de trabajo amplio y flexible. El sistema operativo ha sido 
+configurado para extender el escritorio a ambos monitores, permitiendo una 
+multitarea eficiente. 
+2.1.3.- Ordenador portátil 
+El ordenador portátil ha sido utilizado como una herramienta complementaria 
+para el desarrollo en entornos fuera del ámbito habitual. 
+⮚ Portabilidad y Flexibilidad: El ordenador portátil es ligero y, como su propio 
+nombre indica, portátil, lo que me ha permitido trabajar en el proyecto desde 
+diferentes ubicaciones durante los viajes entre comunidades. 
+Página 19 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+3.- ENUMERACIÓN Y DESARROLLO DE LAS FASES 
+3.0.1- Diagrama de Gantt 
+Para proporcionar una visión más clara y detallada de las fases del proyecto, se incluye un 
+cronograma visual o diagrama de Gantt que representa las fases y actividades principales a lo 
+largo del tiempo: 
+Además, se detallan brevemente las actividades realizadas en cada fase y los resultados 
+obtenidos: - Análisis y Diseño: Se identificaron los requisitos funcionales y no funcionales de la aplicación. 
+Se realizó brain storming para recoger ideas. Se diseñó la arquitectura de la aplicación, 
+incluyendo las vistas en prototipo de baja calidad. - Desarrollo Frontend: Se implementaron las pantallas principales de la aplicación, como la 
+pantalla de inicio, búsqueda, detalles de películas/series/elenco y lista de favoritos. - Desarrollo Backend: Se configuró Firebase para manejar la autenticación de usuarios, la base 
+de datos y el almacenamiento de imágenes. Se implementaron las API necesarias para la 
+comunicación entre el frontend y backend. - Pruebas y Depuración: Se realizaron pruebas para componentes individuales de la aplicación, 
+así como pruebas para asegurar el correcto funcionamiento de la aplicación general. Se 
+corrigieron los errores encontrados. - Implementación y Lanzamiento: Se preparó la aplicación para su lanzamiento al público 
+general, creando el APK de la aplicación.  
+Página 20 de 42 
+FlickFinder  
+3.1.- Fase 1: Análisis y Diseño 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Fecha de Inicio: 25 de marzo de 2024 
+Fecha de Finalización: 7 de abril de 2024 
+Actividades: 
+⮚ Análisis de Requisitos del Proyecto: Se llevó a cabo una revisión exhaustiva 
+de los requisitos del proyecto, identificando las necesidades y expectativas de 
+los usuarios finales. 
+⮚ Investigación de Tecnologías y Herramientas: Se realizó una investigación 
+detallada de las tecnologías y herramientas disponibles para el desarrollo de 
+aplicaciones móviles, evaluando su idoneidad para el proyecto en cuestión. 
+Desarrollo: 
+Durante esta fase, se asignaron los primeros días para realizar un análisis 
+detallado de los requisitos del proyecto. En los primeros tres días, se definieron 
+los objetivos y objetivo del proyecto. A partir del cuarto día, se dedicaron 
+sesiones diarias de trabajo a recopilar y documentar los requisitos específicos 
+del proyecto, lo que incluyó investigación de herramientas a usar en el proyecto. 
+Posteriormente, se destinaron dos días para la investigación de tecnologías y 
+herramientas adecuadas para el desarrollo del proyecto. Durante este período, 
+se evaluaron diferentes opciones de tecnologías para cada componente del 
+proyecto, como el lenguaje de programación, el entorno de desarrollo integrado 
+(IDE) y las bases de datos. 
+Figura 22 - Diseño de Registro e Inicio de Sesión en Figma 
+Página 21 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+3.2.- Fase 2: Desarrollo Frontend y Backend 
+Fecha de Inicio: 8 de abril de 2024 
+Fecha de Finalización: 12 de mayo de 2024 
+Actividades: 
+⮚ Desarrollo de Interfaces de Usuario: Se diseñaron y desarrollaron las interfaces 
+de usuario para la aplicación móvil utilizando Kotlin y Android Studio. Además, 
+se implementaron interfaces para versiones tanto landscape (horizontal) como 
+portrait (vertical), garantizando una experiencia de usuario coherente en 
+diferentes formatos y dispositivos. 
+⮚ Implementación de Funcionalidades del Backend: Se desarrollaron las 
+funcionalidades del backend utilizando Firebase de Google, incluyendo la 
+gestión de usuarios, almacenamiento de datos y autenticación. 
+⮚ Integración de Bases de Datos y Servicios Externos: Se integraron bases de 
+datos externas, como The Movie DataBase y Kinocheck, para obtener 
+información sobre películas y series, así como tráileres oficiales. 
+Desarrollo: 
+Las cinco semanas de desarrollo, se han centrado en el desarrollo del frontend 
+de la aplicación móvil, asignando tareas específicas para el diseño de interfaces 
+de usuario y la implementación de funcionalidades básicas. 
+Simultáneamente, se he trabajado en el backend de la aplicación, configurando 
+la infraestructura necesaria en Firebase y desarrollando las funciones de 
+autenticación de usuarios y gestión de datos, al igual que toda la parte backend 
+asociada al frontend, para que este reaccione al usuario, muestre datos y se 
+actualice y maneje de manera sencilla, precisa y fluida.  
+Durante la finalización del desarrollo, se realizaron pruebas de casos de uso, y 
+en los casos que se identificaron errores, estos se corrigieron asegurando la 
+estabilidad y fiabilidad de la aplicación. Además, se llevaron a cabo pruebas 
+funcionales y de usabilidad para evaluar la experiencia del usuario y garantizar 
+que la aplicación cumpla con los requisitos y expectativas. 
+Página 22 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 1: Diseño de la MainActivity 
+Durante esta fase inicial, me centré en diseñar la MainActivity, la cual es la 
+actividad principal de la aplicación. Se estableció su estructura para cargar y 
+gestionar los fragmentos. Se realizaron varios cambios en el diseño, para 
+asegurar una interfaz de usuario intuitiva y eficiente. 
+Figura 23 - Código de MainActivity 
+Figura 24 - Vista de MainActivity 
+Página 23 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 2: Diseño del Fragmento de Inicio 
+Después de definir la MainActivity, se procedió al diseño del Fragmento de 
+Inicio. Esta pantalla es crucial ya que es lo primero que ve el usuario al abrir la 
+aplicación. Se dedicó especial atención a la disposición de los elementos de la 
+interfaz de usuario y su interacción. 
+Figura 25 - Código de Inicio 
+Figura 26 - Vista de Inicio 
+Página 24 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 3: Desarrollo de la Lógica Principal 
+Con el diseño establecido, se comenzó a desarrollar la lógica principal de la 
+aplicación. Esto incluyó la implementación de la navegación entre fragmentos y 
+otras acciones comunes. Se realizaron pruebas preliminares para verificar el 
+funcionamiento básico de la lógica. 
+Figura 27 - Código de Navegación entre Fragmentos 
+Página 25 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 4: Diseño y Desarrollo de la Vista de Registro e Inicio de Sesión 
+Una vez completada la parte principal de la aplicación, se inició el diseño tanto 
+del inicio de sesión como del registro. Se dedicó tiempo a establecer una interfaz 
+intuitiva y segura para la autenticación de usuarios. Se diseñaron los formularios 
+de registro e inicio de sesión, así como los mensajes de error y éxito asociados. 
+Figura 29 - Vista de Inicio de Sesión 
+Figura 28 - Vista de Registro 
+Página 26 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 5: Diseño e Integración de Firebase 
+Una vez completado el desarrollo inicial, se procedió a integrar Firebase en el 
+proyecto. Se creó un proyecto en Firebase y se configuraron las dependencias 
+necesarias en Android Studio. Se realizaron pruebas de conexión para asegurar 
+una integración exitosa. 
+Figura 31 - Configuración de la Aplicación en la Web de FireBase 
+Figura 30 - Implementación de FireBase en el Proyecto 
+Página 27 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 6: Implementación de la Lógica de Autenticación 
+Con Firebase integrado, se centró en implementar la lógica de autenticación. 
+Esto incluyó la gestión del inicio de sesión y registro de usuarios. Se llevaron a 
+cabo pruebas exhaustivas para garantizar la seguridad y fiabilidad del sistema 
+de autenticación. 
+Figura 32 - Código de Registro con Consulta a FireBase 
+Página 28 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 7: Diseño de Vistas de Detalles 
+Una vez acabado el registro, procedí al diseño y desarrollo de las vistas de los 
+detalles para películas, series y elenco. Se prestó especial atención a la 
+presentación de información detallada y la interacción del usuario. Dado que 
+estas vistas eran completamente diferentes de las anteriores, requerí un 
+período más largo para lograr el diseño deseado. 
+Figura 33 - Vista de Detalles de Películas 
+Página 29 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 8: Lógica de Vistas de Detalles 
+Una vez finalizados los diseños de los detalles, procedí a implementar la lógica 
+correspondiente a cada actividad. La complejidad de esta etapa se debió a la 
+manipulación de grandes cantidades de datos, la interacción con Apis y la 
+presentación de una cantidad considerable de elementos. Fue en esta etapa 
+cuando necesité utilizar Postman para realizar las pruebas a las Apis que integré 
+en la aplicación, verificando las respuestas, y la adecuada manipulación de esos 
+datos. 
+Figura 34 - Código de Detalles de Películas 
+Página 30 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 9: Diseño del Fragmento de Buscar 
+Al terminar esta parte, comencé con el fragmento de Buscar. Primero diseñé la 
+vista, lo cual fue bastante sencillo, ya que no tenía cuenta con demasiados 
+elementos. 
+Figura 35 - Vista de Buscar 
+Página 31 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 10: Desarrollo del Fragmento de Buscar 
+Después desarrollé la lógica del fragmento Buscar, permitiendo al usuario 
+realizar búsquedas por texto, o con búsquedas preprogramadas. Se implementó 
+la lógica necesaria para realizar búsquedas eficientes y presentar los resultados 
+de manera clara y organizada. En este caso fue una lógica más tediosa, por el 
+hecho de tener que cambiar un fragmento desde otro fragmento. 
+Figura 36 - Código de Buscar 
+Página 32 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 11: Desarrollo de la Vista de Búsqueda 
+Una vez completado el Fragmento de Buscar, procedí al diseño y desarrollo del 
+fragmento de Búsqueda. Se diseñó para mostrar los resultados de las consultas 
+realizadas por el usuario de manera dinámica y fácil de entender. Este 
+fragmento fue necesario para la comprobación y las pruebas del fragmento de 
+Buscar. 
+Figura 37 - Vista de Búsqueda 
+Figura 38 - Código de Búsqueda 
+Página 33 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 12: Desarrollo de la Vista de Perfil 
+Después, se diseña la vista del perfil del usuario, que muestra información 
+personal y opciones de configuración. Se implementó la lógica para gestionar la 
+visualización y edición de datos de perfil, así como la gestión de favoritos del 
+usuario. 
+Figura 39 - Código de Perfil 
+Figura 40 - Vista de Perfil 
+Página 34 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 13: Desarrollo del Fragmento de Favoritos 
+Una vez hecho el perfil, comencé con el desarrollo del Fragmento de Favoritos, 
+que permite al usuario gestionar y acceder fácilmente a sus contenidos 
+favoritos. Se implementa la lógica necesaria para agregar, eliminar y organizar 
+elementos en la lista de favoritos. 
+Figura 41 - Código de Favoritos 
+Figura 42 - Vista de Favoritos 
+Página 35 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 14: Desarrollo de Vistas de Reproducción 
+Durante esta etapa, desarrollé las vistas y la lógica de las actividades encargadas 
+de reproducir contenido La actividad del reproductor de Exoplayer, para 
+reproducir la película desde el hosting, la actividad de reproductor de YouTube, 
+para tener acceso a los tráileres publicados en YouTube, y por último la actividad 
+de la página web, para que el usuario pueda navegar para acceder a las páginas 
+web oficiales de las series, sin salir de la aplicación. Este ha sido un apartado al 
+que le he dedicado mucha inversión de tiempo, ya que creo que es un acierto. 
+Figura 43 - Vista de Reproductor de Películas 
+Figura 44 - Vista de Reproductor de Tráileres 
+Página 36 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 15: Desarrollo de Versiones Landscape 
+Para mejorar la estabilidad de la aplicación y la experiencia del usuario en 
+dispositivos horizontales, se diseñan las versiones landscape de las actividades 
+necesarias. Se realizaron ajustes de diseño y funcionalidad para garantizar una 
+experiencia fluida en cualquier orientación de pantalla. 
+Figura 45 - Vista Landscape de Registro 
+Figura 46 - Vista Landscape de Detalles de Películas 
+Página 37 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 16: Implementación de Traducción y Extracción de Strings 
+Se procedió a implementar la traducción y extracción de strings para facilitar la 
+internacionalización de la aplicación. Se utilizaron herramientas de Android 
+Studio para gestionar los recursos de texto y facilitar su traducción a diferentes 
+idiomas. 
+Figura 47 - Captura de la Traducción de los Strings al Inglés 
+Figura 48 - Captura de los Strings en Español 
+Página 38 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Etapa 17: Configuración de Modo Oscuro 
+Por último, configure el modo oscuro para ofrecer una opción de visualización 
+alternativa y mejorar la accesibilidad de la aplicación. Se realizaron pruebas 
+exhaustivas para garantizar que el modo oscuro funcione correctamente en 
+todas las partes de la aplicación. 
+Figura 50 - Captura del Modo Oscuro de la Aplicación 
+Figura 49 - Captura del Modo Claro de la Aplicación 
+Figura 52 - Vista de Inicio de Sesión en Modo Oscuro 
+Figura 51 - Vista de Inicio de Sesión en Modo Claro 
+Página 39 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Fase 3: Lanzamiento y Evaluación 
+Fecha de Inicio: 13 de mayo de 2024 
+Fecha de Finalización: 17 de mayo de 2024 
+Actividades: 
+➢ Lanzamiento de la Aplicación a producción: Se llevó a cabo la compilación del proyecto 
+en formato APK, asegurando su disponibilidad y su sencilla instalación para los usuarios. 
+➢ Evaluación del Rendimiento y la Estabilidad de la Aplicación: Se realizó una evaluación 
+exhaustiva del rendimiento y la estabilidad de la aplicación, recopilando y analizando la 
+retroalimentación de los usuarios de prueba. 
+➢ Planificación de Mejoras y Actualizaciones Futuras: Se han planificado mejoras y 
+actualizaciones futuras basadas en la retroalimentación de los usuarios, buscando 
+expandir y mejorar la funcionalidad de la aplicación. 
+➢ Página Web Promocional: Una vez las actividades del lanzamiento, creación del archivo 
+APK, y la planificación de mejoras estaban terminadas satisfactoriamente, realicé una 
+web sencilla para la promoción, visibilidad pública y accesibilidad del usuario a 
+descargar la aplicación. Puedes visitarla desde aquí. 
+Figura 53 - Captura de la Página Web Promocional 
+Página 40 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+CONCLUSIONES 
+Concluyendo este trabajo, me siento extremadamente satisfecho con los resultados alcanzados 
+en el desarrollo de la aplicación. Durante este proceso, he logrado cumplir con la gran mayoría 
+de los requisitos establecidos inicialmente, demostrando así mi capacidad para planificar y 
+ejecutar proyectos en plazo de manera efectiva. 
+A lo largo de este proyecto, he enfrentado desafíos significativos que me han permitido adquirir 
+un conocimiento más profundo sobre el desarrollo de aplicaciones móviles. Si bien había 
+planeado implementar versiones adicionales para escritorio y web, lamentablemente, debido a 
+restricciones de tiempo, estas funcionalidades no pudieron ser incluidas en esta versión del 
+proyecto. Sin embargo, considero que la decisión de priorizar el desarrollo móvil fue acertada, 
+dada la naturaleza de la aplicación y su público objetivo. 
+Mirando hacia el futuro, identifico varias áreas de mejora y nuevas funcionalidades que podrían 
+agregarse a la aplicación para enriquecer la experiencia del usuario. Una de estas áreas es la 
+integración de características sociales que permitan a los usuarios conectarse con amigos, 
+compartir listas de favoritos y participar en interacciones sociales como chats o convertir la 
+aplicación en una especie de red social. Además, considero importante implementar la 
+capacidad de gestionar múltiples listas de favoritos con opciones de privacidad personalizables 
+para brindar a los usuarios un mayor control sobre su experiencia. 
+En cuanto a la autenticación de usuarios, aunque he explorado la posibilidad de integrar 
+diferentes métodos de inicio de sesión, como a través de Facebook, he encontrado algunos 
+desafíos que requieren una investigación y desarrollo adicional. Sin embargo, reconozco la 
+importancia de esta funcionalidad para ampliar el alcance de la aplicación y llegar a un público 
+más diverso. 
+En el transcurso de este proyecto, he adquirido una valiosa experiencia técnica y he desarrollado 
+habilidades de resolución de problemas que sin duda me servirán en tanto en mi carrera 
+profesional como personal. A través de la planificación, el diseño y la implementación de esta 
+aplicación, he fortalecido mi comprensión de los principios fundamentales del desarrollo de 
+software y he ganado confianza en mi capacidad para abordar desafíos complejos en futuros 
+proyectos. 
+Alguna de las lecciones aprendidas durante el desarrollo de este proyecto, son la importancia 
+de una planificación detallada y un diseño robusto para evitar problemas durante las fases de 
+desarrollo y pruebas, y la necesidad de una buena flexibilidad y adaptabilidad para manejar los 
+imprevistos y ajustar el proyecto según el feedback recibido. 
+En resumen, el desarrollo de esta aplicación ha sido una experiencia enriquecedora que me ha 
+permitido aplicar y ampliar mis conocimientos en desarrollo de software. Aunque queda trabajo 
+por hacer para alcanzar todas las metas propuestas, estoy seguro de que las habilidades y el 
+conocimiento adquiridos durante este proyecto me servirán como base sólida para futuros 
+desafíos en el campo de la informática. 
+Página 41 de 42 
+FlickFinder  
+Bibliografía 
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+BIBLIOGRAFÍAS Y REFERENCIAS 
+Android Developers. (s.f.). Android Developers. Obtenido de https://developer.android.com/ 
+ChatGPT. (s.f.). ChatGPT. Obtenido de https://chat.openai.com/ 
+DBTechProjects. (s.f.). Youtube. Obtenido de 
+https://www.youtube.com/watch?v=VvXqbjqWvr0 
+DevExpert. (s.f.). YouTube. Obtenido de https://www.youtube.com/watch?v=q5b1CVtW8Xg 
+Figma. (s.f.). Figma. Obtenido de https://www.figma.com/ 
+FireBase. (s.f.). FireBase. Obtenido de https://firebase.google.com/ 
+GitHub. (s.f.). GitHub. Obtenido de https://github.com/ 
+Google Developers. (s.f.). Google Developers. Obtenido de https://developers.google.com/ 
+Google Drive. (s.f.). Google Drive. Obtenido de https://drive.google.com/ 
+Iconos8. (s.f.). Iconos8. Obtenido de https://iconos8.es/ 
+KinoCheck. (s.f.). KinoCheck API. Obtenido de https://api.kinocheck.com/ 
+Master Coding. (s.f.). YouTube. Obtenido de 
+https://www.youtube.com/watch?v=wceDQQARVrM&t 
+Molina, B. (s.f.). YouTube. Obtenido de https://www.youtube.com/watch?v=P6CRIqYC-V8&t 
+MoureDev. (s.f.). YouTube. Obtenido de https://www.youtube.com/watch?v=KYPc7CAYJOw 
+Nominalia. (s.f.). Nominalia. Obtenido de https://www.nominalia.com/ 
+Postman. (s.f.). Postman. Obtenido de https://www.postman.com/ 
+Soffritti, P. F. (s.f.). GitHub. Obtenido de https://github.com/PierfrancescoSoffritti/android
+youtube-player 
+Stack Overflow. (s.f.). Stack Overflow. Obtenido de https://es.stackoverflow.com/ 
+Statista. (s.f.). Statista. Obtenido de https://www.statista.com/ 
+The Movie Database. (s.f.). The Movie DataBase. Obtenido de https://www.themoviedb.org/ 
+The Movie DataBase. (s.f.). TMDB API. Obtenido de https://developer.themoviedb.org/ 
+Traductor de Google. (s.f.). Google Translate. Obtenido de https://translate.google.com/ 
+Trello. (s.f.). Trello. Obtenido de https://trello.com/ 
+Página 42 de 42 
+FlickFinder  
+Módulo Proyecto Desarrollo de aplicaciones 
+Multiplataforma  
+Página 43 de 42 
+FlickFinder  

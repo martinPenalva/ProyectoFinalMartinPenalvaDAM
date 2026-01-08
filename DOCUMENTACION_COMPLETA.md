@@ -252,11 +252,11 @@ Gestiona la conexión a MySQL usando un pool de conexiones para soportar múltip
 **Métodos Clave:**
 
 1. **`_create_connection_pool()`** (líneas 42-57): Crea el pool de conexiones
-   - ![Creación del Pool de Conexiones](PROYECTO_FINAL_IMAGENES/Captura del método que crea el pool de conexiones MySQL.png)  
+   - ![Creación del Pool de Conexiones](PROYECTO_FINAL_IMAGENES/create_conection_pool.png)  
     *Captura del método que crea el pool de conexiones MySQL.*
 
 2. **`get_connection()`** (líneas 59-72): Obtiene una conexión del pool
-   - ![Método get_connection](PROYECTO_FINAL_IMAGENES/Captura del método get_connection() que permite a cada usuario tener su propia conexión.png)  
+   - ![Método get_connection](PROYECTO_FINAL_IMAGENES/get_conection.png)  
     *Captura del método get_connection() que permite a cada usuario tener su propia conexión.*
 
 **Características del Pool:**
