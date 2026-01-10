@@ -537,15 +537,57 @@ DB_NAME=eventos_locales
 
 **Nota importante:** Si tu instalación de MySQL utiliza un puerto diferente al 3306 (por defecto) o 3309, asegúrate de especificarlo en `DB_PORT`. También es recomendable crear un usuario específico para la aplicación en lugar de usar `root` por razones de seguridad.
 
-**Paso 4: Verificación de la Conexión**
+**Paso 4: Ejecución de la Aplicación**
 
-1. Ejecutar la aplicación: `python src/main.py`
+Existen varias formas de ejecutar la aplicación una vez configurada la base de datos:
+
+**Opción 1: Ejecutar mediante Acceso Directo (Recomendado para Usuarios Finales)**
+
+Esta es la forma más cómoda para usuarios finales que utilizarán la aplicación regularmente:
+
+1. **Ejecutar el script de creación de acceso directo**: 
+   - **Método A**: Hacer doble clic en el archivo `crear_acceso_directo.bat` ubicado en la raíz del proyecto
+   - **Método B**: Ejecutar desde PowerShell: `.\crear_acceso_directo.ps1`
+
+2. El script creará automáticamente un acceso directo en el escritorio del usuario con el nombre "Gestor de Eventos Locales" y el icono de la aplicación configurado.
+
+3. Una vez creado, el usuario puede ejecutar la aplicación haciendo doble clic en el acceso directo del escritorio en cualquier momento.
+
+**Ventajas del acceso directo:**
+- No requiere abrir una terminal o línea de comandos
+- El acceso directo aparece en el escritorio con un icono reconocible
+- Permite ejecutar la aplicación con un simple doble clic
+- El icono personalizado facilita la identificación de la aplicación
+
+**Opción 2: Ejecutar desde Línea de Comandos (Para Desarrolladores)**
+
+Para desarrolladores o usuarios técnicos, la aplicación puede ejecutarse directamente desde la terminal:
+
+1. Abrir una terminal o símbolo del sistema (CMD) o PowerShell
+2. Navegar al directorio del proyecto
+3. Ejecutar: `python src/main.py`
+
+Este método es útil para ver errores en consola durante el desarrollo o depuración.
+
+**Opción 3: Crear Ejecutable Independiente (.exe)**
+
+Para usuarios que no tienen Python instalado, se puede crear un ejecutable independiente:
+
+1. Instalar PyInstaller: `pip install pyinstaller`
+2. Ejecutar el script: `crear_ejecutable.bat` (ubicado en la raíz del proyecto)
+3. El ejecutable se generará en la carpeta `dist/GestorEventos.exe`
+4. Este ejecutable puede copiarse y ejecutarse en cualquier ordenador Windows sin necesidad de Python
+
+**Paso 5: Verificación de la Conexión**
+
+1. Ejecutar la aplicación usando cualquiera de los métodos anteriores
 2. Si la conexión es exitosa, se mostrará la ventana de login
 3. Si hay un error de conexión, verificar:
    - Que MySQL Server esté ejecutándose
    - Que las credenciales en el archivo `.env` sean correctas
    - Que el puerto especificado sea el correcto
    - Que la base de datos `eventos_locales` exista y tenga todas las tablas creadas
+   - Que Python esté correctamente instalado y en el PATH del sistema (si se usa Opción 1 o 2)
 
 **Credenciales por defecto del administrador:**
 - Usuario: `ADMIN`
