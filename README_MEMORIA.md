@@ -304,7 +304,17 @@ El rol de **usuario** (`user`) tiene permisos limitados, enfocados principalment
 - ✅ Exportar inscripciones a CSV y PDF
 - ✅ Generar reporte completo en PDF (incluye eventos, participantes, inscripciones y estadísticas generales)
 
-**Nota importante:** Para que un usuario pueda inscribirse en eventos, debe tener un perfil de participante asociado a su nombre de usuario. Si un usuario no tiene un perfil de participante asociado, recibirá un mensaje indicando que debe contactar al administrador para asociar su usuario con un participante.
+**Nota importante sobre Usuarios y Participantes:**
+
+La distinción entre usuarios y participantes es fundamental para entender los permisos del sistema:
+
+- **Usuarios Administradores**: No requieren un perfil de participante asociado. Pueden realizar todas las operaciones administrativas (gestionar eventos, participantes, inscripciones, usuarios) sin necesidad de inscribirse personalmente en eventos.
+
+- **Usuarios Regulares que quieren inscribirse**: Para que un usuario regular pueda inscribirse en eventos, debe tener un **perfil de participante asociado**. La asociación se realiza automáticamente buscando un participante cuyo email coincida con el username del usuario. Si no encuentra un participante asociado, el sistema mostrará un mensaje indicando que debe contactar al administrador para crear su perfil de participante.
+
+- **Usuarios Regulares que solo consultan**: Un usuario regular puede acceder al sistema para ver eventos, participantes e inscripciones (solo lectura) sin necesidad de tener un perfil de participante, pero no podrá inscribirse en eventos hasta que el administrador cree y asocie su perfil de participante.
+
+Esta separación permite que los administradores gestionen participantes que no tienen cuentas de usuario (por ejemplo, inscripciones presenciales o telefónicas), mientras que los usuarios regulares pueden acceder al sistema para gestionar sus propias inscripciones cuando tienen un perfil asociado.
 
 ---
 
@@ -758,15 +768,92 @@ Se diseñó el esquema de la base de datos, definiendo las tablas, relaciones, �
   - **event_registrations**: Almacena las inscripciones de participantes a eventos (relación many-to-many)
   - **audit_logs**: Almacena logs de auditoría de operaciones importantes en el sistema
 
+**Distinción Fundamental: Usuarios vs Participantes**
+
+Es crucial entender la diferencia conceptual entre **usuarios (users)** y **participantes (participants)**, ya que aunque pueden estar relacionados, representan conceptos distintos con propósitos diferentes:
+
+**¿Qué es un Usuario (User)?**
+
+Un **usuario** representa una **cuenta de acceso al sistema**. Es una entidad técnica que permite autenticarse en la aplicación mediante un nombre de usuario (username) y una contraseña. Los usuarios tienen las siguientes características:
+
+- **Propósito**: Gestionar el acceso al sistema y determinar permisos de operación
+- **Atributos principales**: `user_id`, `username`, `password_hash`, `role` (admin/user), `created_at`
+- **Funcionalidad**: 
+  - Permite autenticarse en el sistema mediante login
+  - Define permisos mediante roles (administrador o usuario regular)
+  - Permite registrar quién realiza cada operación para auditoría
+  - No requiere información personal detallada
+
+**¿Qué es un Participante (Participant)?**
+
+Un **participante** representa una **persona física real** que puede inscribirse en eventos. Es una entidad del dominio de negocio que contiene información de contacto e identificación personal. Los participantes tienen las siguientes características:
+
+- **Propósito**: Gestionar información de personas que participan en eventos
+- **Atributos principales**: `participant_id`, `first_name`, `last_name`, `email`, `phone`, `identifier` (DNI/NIE), `created_at`
+- **Funcionalidad**:
+  - Almacena información personal de contacto (nombre, email, teléfono)
+  - Permite identificar únicamente a cada persona mediante DNI/NIE
+  - Es la entidad que realmente se inscribe en los eventos
+  - Permite generar reportes de asistencia y participación
+
+**¿Por qué están separados?**
+
+La separación entre usuarios y participantes responde a varios principios de diseño importantes:
+
+1. **Separación de Responsabilidades**: Los usuarios gestionan el acceso y la seguridad del sistema, mientras que los participantes gestionan la información del negocio (inscripciones a eventos).
+
+2. **Flexibilidad Operativa**: 
+   - Un **administrador** puede gestionar el sistema sin necesidad de tener un perfil de participante, ya que su función es administrativa, no participar en eventos.
+   - Una organización puede tener **participantes que no son usuarios** del sistema (por ejemplo, cuando un administrador registra participantes manualmente).
+   - Un **usuario regular** puede querer acceder al sistema para ver eventos pero no necesariamente inscribirse en ninguno.
+
+3. **Escalabilidad**: Permite que el sistema gestione casos donde hay muchos participantes pero pocos usuarios del sistema, o viceversa.
+
+4. **Privacidad y Seguridad**: La información de participantes (nombres, emails, DNI) puede ser sensible y no todos los usuarios necesitan acceso a ella. Separar los conceptos permite un control de acceso más granular.
+
+**Relación entre Usuarios y Participantes:**
+
+La relación entre usuarios y participantes es **opcional e implícita**:
+
+- **No existe una clave foránea explícita**: Las tablas `users` y `participants` no tienen una relación de base de datos formal mediante claves foráneas. En su lugar, la asociación se realiza de forma lógica mediante búsqueda por **email** o **username**.
+
+- **Mecanismo de Asociación**: Cuando un usuario regular intenta inscribirse en un evento, el sistema busca un participante cuyo email coincida con el username del usuario mediante el método `find_by_username()` del `ParticipantController`, que utiliza múltiples estrategias:
+  1. Email exacto igual al username
+  2. Email que empiece con `username@`
+  3. Email donde la parte antes del `@` coincida con el username
+
+- **Casos de Uso Prácticos**:
+  - **Usuario Administrador sin Participante**: Un administrador puede trabajar completamente en el sistema gestionando eventos, participantes e inscripciones sin necesidad de tener su propio perfil de participante.
+  
+  - **Usuario Regular con Participante Asociado**: Un usuario regular que quiere inscribirse en eventos debe tener un participante asociado. Si no lo tiene, verá un mensaje indicando que debe contactar al administrador para crear su perfil de participante.
+  
+  - **Participante sin Usuario**: Un administrador puede crear participantes manualmente (por ejemplo, cuando alguien se inscribe presencialmente) sin que esa persona tenga una cuenta de usuario en el sistema.
+
+**Ejemplo Práctico:**
+
+Imagina una organización que gestiona eventos locales:
+
+- **María (Administradora)**: Tiene un usuario `maria_admin` con rol `admin`. Puede gestionar todo el sistema, crear eventos, gestionar participantes e inscripciones, pero no tiene un perfil de participante porque su función es administrativa.
+
+- **Juan (Usuario Regular)**: Tiene un usuario `juan.garcia` con rol `user` y un participante asociado con email `juan.garcia@email.com`. Puede iniciar sesión, ver eventos disponibles, e inscribirse en eventos usando su perfil de participante.
+
+- **Carlos (Participante sin Usuario)**: Fue registrado manualmente por el administrador como participante con email `carlos.martinez@email.com`, pero no tiene cuenta de usuario. Aparece en los reportes de inscripciones, pero no puede acceder al sistema.
+
+Esta separación de conceptos proporciona flexibilidad y claridad en el diseño, permitiendo que el sistema se adapte a diferentes escenarios de uso reales.
+
 - **Normalización**: Se aplicaron las reglas de normalización para evitar redundancia de datos:
   - Primera Forma Normal (1NF): Todos los atributos son atómicos (no hay listas o arrays)
   - Segunda Forma Normal (2NF): Todos los atributos no clave dependen completamente de la clave primaria
   - Tercera Forma Normal (3NF): No hay dependencias transitivas (los atributos no clave no dependen de otros atributos no clave)
 
 - **Relaciones**: Se definieron las relaciones entre entidades:
-  - **users ↔ participants**: Relación uno-a-uno opcional (un usuario puede estar asociado a un participante)
-  - **participants ↔ event_registrations**: Relación uno-a-muchos (un participante puede tener múltiples inscripciones)
-  - **events ↔ event_registrations**: Relación uno-a-muchos (un evento puede tener múltiples inscripciones)
+  - **users ↔ participants**: Relación lógica uno-a-uno opcional e implícita (no hay clave foránea explícita). Un usuario puede estar asociado a un participante mediante coincidencia de email/username. Esta relación es opcional porque:
+    - Los administradores no necesitan un participante asociado
+    - Pueden existir participantes sin usuario (registrados manualmente por administradores)
+    - La asociación se realiza mediante búsqueda por email, no mediante clave foránea
+  - **participants ↔ event_registrations**: Relación uno-a-muchos mediante clave foránea (un participante puede tener múltiples inscripciones en diferentes eventos)
+  - **events ↔ event_registrations**: Relación uno-a-muchos mediante clave foránea (un evento puede tener múltiples inscripciones de diferentes participantes)
+  - **users ↔ audit_logs**: Relación uno-a-muchos (un usuario puede generar múltiples registros de auditoría)
 
 - **Índices**: Se definieron índices estratégicos para optimizar las consultas frecuentes:
   - Índice en `users.username` para búsquedas rápidas de usuarios
@@ -1220,16 +1307,44 @@ El módulo de base de datos gestiona todas las interacciones con MySQL:
 
 #### 4.2.3. Módulo de Modelos (`models/`)
 
-Los modelos representan las entidades del dominio de negocio:
-- **User**: Representa un usuario del sistema con sus atributos (id, username, password_hash, role, created_at)
-- **Event**: Representa un evento con sus atributos (id, name, date, description, capacity, registered_count, version, created_at)
-- **Participant**: Representa un participante con sus atributos (id, first_name, last_name, email, phone, created_at)
+Los modelos representan las entidades del dominio de negocio, cada una con un propósito específico:
+
+- **User**: Representa una cuenta de acceso al sistema. Sus atributos principales son:
+  - `user_id`: Identificador único del usuario
+  - `username`: Nombre de usuario para autenticación (único)
+  - `password_hash`: Hash de la contraseña (bcrypt) para seguridad
+  - `role`: Rol del usuario (`admin` o `user`) que determina permisos
+  - `created_at`: Fecha de creación de la cuenta
+  - **Propósito**: Gestionar autenticación, autorización y auditoría de operaciones
+
+- **Event**: Representa un evento del sistema. Sus atributos principales son:
+  - `event_id`: Identificador único del evento
+  - `title`: Nombre del evento
+  - `description`: Descripción detallada
+  - `location`: Ubicación del evento
+  - `start_datetime` / `end_datetime`: Fechas y horarios
+  - `capacity`: Aforo máximo del evento
+  - `status`: Estado del evento (activo, planificado, cancelado)
+  - `version`: Campo para control de versiones optimista (concurrencia)
+  - `created_at` / `updated_at`: Fechas de creación y actualización
+  - **Propósito**: Almacenar información de eventos que pueden tener participantes inscritos
+
+- **Participant**: Representa una persona física que puede participar en eventos. Sus atributos principales son:
+  - `participant_id`: Identificador único del participante
+  - `first_name` / `last_name`: Nombre y apellidos
+  - `email`: Correo electrónico (único, usado para asociación con usuarios)
+  - `phone`: Teléfono de contacto (opcional)
+  - `identifier`: DNI/NIE o identificador único (único)
+  - `created_at` / `updated_at`: Fechas de creación y actualización
+  - **Propósito**: Almacenar información personal de personas que se inscriben en eventos
+  - **Nota**: Tiene una propiedad calculada `full_name` que retorna el nombre completo
 
 Cada modelo incluye:
-- Constructor que inicializa todos los atributos
-- Método `to_dict()` para serializar el modelo a un diccionario
-- Método `from_dict()` para crear una instancia del modelo desde un diccionario
-- Propiedades calculadas cuando es necesario (ej: `full_name` en Participant)
+- Constructor que inicializa todos los atributos con valores por defecto apropiados
+- Método `to_dict()` para serializar el modelo a un diccionario (útil para JSON, logs, etc.)
+- Método `from_dict()` (método de clase) para crear una instancia del modelo desde un diccionario
+- Métodos `__str__()` y `__repr__()` para representación legible del objeto
+- Propiedades calculadas cuando es necesario (ej: `full_name` en Participant que concatena nombre y apellidos)
 
 #### 4.2.4. Módulo de Controladores (`controllers/`)
 

@@ -500,27 +500,7 @@ class ParticipantView:
         buttons_frame = tk.Frame(content, bg=COLORS['white'])
         buttons_frame.pack(pady=(20, 0))
         
-        # Botón Agregar Evento (solo para admin)
-        if self.is_admin:
-            def add_event_and_close():
-                modal.destroy()
-                self.add_to_event(participant.participant_id, self.parent)
-            
-            btn_add_event = tk.Button(
-                buttons_frame,
-                text="➕ Agregar Evento",
-                font=("Arial", 10, "bold"),
-                bg="#10b981",
-                fg="white",
-                relief=tk.FLAT,
-                cursor="hand2",
-                padx=24,
-                pady=10,
-                command=add_event_and_close
-            )
-            btn_add_event.pack(side=tk.LEFT, padx=(0, 10))
-        
-        # Botón Editar (solo para admin)
+        # Botón Editar (solo para administradores)
         if self.is_admin:
             def edit_and_close():
                 modal.destroy()
@@ -930,7 +910,7 @@ class ParticipantView:
         )
         btn_close.pack(side=tk.RIGHT)
     
-    def add_to_event(self, participant_id, parent_modal):
+    def add_to_event(self, participant_id, details_modal, participant):
         """Agrega el participante a un evento"""
         # Obtener lista de eventos
         events = self.event_controller.get_all()
@@ -939,63 +919,133 @@ class ParticipantView:
             messagebox.showwarning("Advertencia", "No hay eventos disponibles")
             return
         
-        # Crear diálogo de selección
-        event_titles = [f"{e.title} ({e.start_datetime.strftime('%d/%m/%Y') if e.start_datetime else 'Sin fecha'})" for e in events]
+        # Filtrar eventos donde el participante ya está inscrito
+        participant_events = []
+        if self.registration_controller:
+            participant_events_data = self.registration_controller.get_participant_events(participant_id)
+            participant_events = [e.get('event_id') for e in participant_events_data if e.get('event_id')]
         
-        selection_modal = tk.Toplevel(parent_modal)
+        # Crear diálogo de selección
+        available_events = [e for e in events if e.event_id not in participant_events]
+        
+        if not available_events:
+            messagebox.showinfo("Información", "El participante ya está inscrito en todos los eventos disponibles")
+            return
+        
+        event_titles = [f"{e.title} ({e.start_datetime.strftime('%d/%m/%Y') if e.start_datetime else 'Sin fecha'})" for e in available_events]
+        
+        selection_modal = tk.Toplevel(details_modal)
         selection_modal.title("Seleccionar evento")
-        selection_modal.geometry("400x200")
-        selection_modal.transient(parent_modal)
+        selection_modal.geometry("450x250")
+        selection_modal.transient(details_modal)
         selection_modal.grab_set()
         
-        label = tk.Label(
-            selection_modal,
-            text="Selecciona un evento:",
-            font=("Arial", 10),
-            pady=20
+        # Centrar modal
+        selection_modal.update_idletasks()
+        x = (selection_modal.winfo_screenwidth() // 2) - (450 // 2)
+        y = (selection_modal.winfo_screenheight() // 2) - (250 // 2)
+        selection_modal.geometry(f"450x250+{x}+{y}")
+        
+        # Header
+        header = tk.Frame(selection_modal, bg=COLORS['primary'], height=40)
+        header.pack(fill=tk.X)
+        header.pack_propagate(False)
+        
+        header_label = tk.Label(
+            header,
+            text="Seleccionar Evento",
+            font=("Arial", 10, "bold"),
+            bg=COLORS['primary'],
+            fg="white"
         )
-        label.pack()
+        header_label.pack(pady=12)
+        
+        # Body
+        body = tk.Frame(selection_modal, bg=COLORS['white'])
+        body.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        
+        label = tk.Label(
+            body,
+            text="Selecciona un evento para inscribir al participante:",
+            font=("Arial", 10),
+            bg=COLORS['white'],
+            anchor=tk.W
+        )
+        label.pack(anchor=tk.W, pady=(0, 10))
         
         event_var = tk.StringVar()
         event_combo = ttk.Combobox(
-            selection_modal,
+            body,
             textvariable=event_var,
             values=event_titles,
             state="readonly",
-            width=40
+            width=50,
+            font=("Arial", 9)
         )
-        event_combo.pack(pady=10)
-        event_combo.current(0)
+        event_combo.pack(fill=tk.X, pady=10)
+        if event_titles:
+            event_combo.current(0)
         
         def on_confirm():
             selected_index = event_combo.current()
-            if selected_index >= 0:
-                selected_event = events[selected_index]
+            if selected_index >= 0 and selected_index < len(available_events):
+                selected_event = available_events[selected_index]
                 
-                # Registrar participante
-                registration_id = self.registration_controller.register_participant(
-                    selected_event.event_id,
-                    participant_id
-                )
-                
-                if registration_id:
-                    messagebox.showinfo("Éxito", f"Participante inscrito en '{selected_event.title}'")
-                    selection_modal.destroy()
-                    if parent_modal:
-                        parent_modal.destroy()
-                    # Recargar la vista de participantes para actualizar el número de eventos
-                    self.load_participants()
-                else:
-                    messagebox.showerror("Error", "No se pudo inscribir al participante (evento lleno o ya inscrito)")
+                try:
+                    # Registrar participante
+                    registration_id = self.registration_controller.register_participant(
+                        selected_event.event_id,
+                        participant_id
+                    )
+                    
+                    if registration_id:
+                        messagebox.showinfo("Éxito", f"Participante inscrito correctamente en '{selected_event.title}'")
+                        selection_modal.destroy()
+                        # Recargar la vista de participantes para actualizar el número de eventos
+                        self.load_participants()
+                        # Cerrar y reabrir el modal de detalles para mostrar los nuevos eventos
+                        details_modal.destroy()
+                        # Reabrir el modal de detalles con los datos actualizados
+                        participant_updated = self.participant_controller.get_by_id(participant_id)
+                        if participant_updated:
+                            self.show_participant_details_modal(participant_updated)
+                    else:
+                        messagebox.showerror("Error", "No se pudo inscribir al participante (evento lleno o ya inscrito)")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Error al inscribir participante: {str(e)}")
+            else:
+                messagebox.showwarning("Advertencia", "Por favor selecciona un evento")
+        
+        # Footer con botones
+        footer = tk.Frame(selection_modal, bg=COLORS['table_header'])
+        footer.pack(fill=tk.X, padx=20, pady=(0, 20))
+        
+        btn_cancel = tk.Button(
+            footer,
+            text="Cancelar",
+            font=("Arial", 9),
+            bg=COLORS['white'],
+            fg="#374151",
+            relief=tk.SOLID,
+            borderwidth=1,
+            padx=14,
+            pady=7,
+            cursor="hand2",
+            command=selection_modal.destroy
+        )
+        btn_cancel.pack(side=tk.RIGHT, padx=(6, 0))
         
         btn_confirm = tk.Button(
-            selection_modal,
+            footer,
             text="Confirmar",
-            command=on_confirm,
+            font=("Arial", 9, "bold"),
             bg=COLORS['primary'],
             fg="white",
-            padx=20,
-            pady=5
+            relief=tk.FLAT,
+            padx=14,
+            pady=7,
+            cursor="hand2",
+            command=on_confirm
         )
-        btn_confirm.pack(pady=10)
+        btn_confirm.pack(side=tk.RIGHT)
 
