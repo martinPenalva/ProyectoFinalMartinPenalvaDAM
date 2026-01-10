@@ -840,6 +840,9 @@ Durante esta fase inicial, me centré en diseñar la ventana de login, la cual e
 ![Ventana de Registro](PROYECTO_FINAL_IMAGENES/registrarse.png)
 *Figura: Ventana de registro de nuevos usuarios*
 
+![Mensaje de Registro Correcto](PROYECTO_FINAL_IMAGENES/mensaje_registro_correcto.png)
+*Figura: Mensaje de confirmación tras registrar un participante correctamente*
+
 #### Etapa 2: Diseño de la Ventana Principal
 
 Después de definir la ventana de login, se procedió al diseño de la ventana principal. Esta pantalla es crucial ya que es el centro de control de toda la aplicación. Se dedicó especial atención a la disposición de los elementos de la interfaz de usuario, incluyendo un menú lateral para la navegación entre diferentes secciones.
@@ -910,9 +913,6 @@ Se desarrolló la vista de inscripciones, que permite gestionar las inscripcione
 
 ![Inscripción Exitosa](PROYECTO_FINAL_IMAGENES/inscribirse_correctamente.png)
 *Figura: Confirmación de inscripción exitosa a un evento*
-
-![Mensaje de Registro Correcto](PROYECTO_FINAL_IMAGENES/mensaje_registro_correcto.png)
-*Figura: Mensaje de confirmación tras registrar un participante correctamente*
 
 #### Etapa 7: Vista de Reportes y Exportación
 
