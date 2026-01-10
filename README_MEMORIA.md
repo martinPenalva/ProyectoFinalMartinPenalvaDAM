@@ -79,6 +79,7 @@
      - [Etapa 5: Vista de Gestión de Participantes](#etapa-5-vista-de-gestión-de-participantes)
      - [Etapa 6: Vista de Inscripciones](#etapa-6-vista-de-inscripciones)
      - [Etapa 7: Vista de Reportes y Exportación](#etapa-7-vista-de-reportes-y-exportación)
+     - [Etapa 8: Vista de Gestión de Usuarios](#etapa-8-vista-de-gestión-de-usuarios)
    - [3.3. Fase 3: Implementación de Concurrencia y Optimización](#33-fase-3-implementación-de-concurrencia-y-optimización)
      - [Etapa 1: Control de Versiones Optimista](#etapa-1-control-de-versiones-optimista)
      - [Etapa 2: Sistema de Locks de Recursos](#etapa-2-sistema-de-locks-de-recursos)
@@ -926,6 +927,31 @@ Se implementó la funcionalidad de exportación de datos a CSV y PDF, permitiend
 
 ![Código de Exportación a PDF](PROYECTO_FINAL_IMAGENES/Código de Exportación a PDF.png)
 *Figura: Implementación del método export_events() de PDFExporter*
+
+#### Etapa 8: Vista de Gestión de Usuarios
+
+Se implementó la vista de gestión de usuarios, una funcionalidad administrativa esencial que permite a los administradores gestionar todos los usuarios del sistema. Esta vista es accesible exclusivamente para usuarios con rol de administrador, garantizando que solo personal autorizado pueda realizar operaciones críticas como crear, editar o eliminar usuarios del sistema.
+
+**Funcionalidades principales:**
+
+- **Visualización de Usuarios**: La vista muestra una tabla completa con todos los usuarios registrados en el sistema, incluyendo información relevante como nombre de usuario, rol (administrador o usuario), y fecha de creación de la cuenta.
+
+- **Creación de Usuarios**: Los administradores pueden crear nuevos usuarios del sistema mediante un formulario que incluye validación de datos, asegurando que el nombre de usuario sea único y que la contraseña cumpla con los requisitos de seguridad mínimos.
+
+- **Edición de Usuarios**: Permite modificar información de usuarios existentes, incluyendo el cambio de rol (promover usuarios regulares a administradores o viceversa) y la actualización de contraseñas. Esta funcionalidad es esencial para la gestión del sistema y el mantenimiento de la seguridad.
+
+- **Eliminación de Usuarios**: Los administradores pueden eliminar usuarios del sistema cuando sea necesario, con validaciones que previenen la eliminación accidental del último administrador del sistema, garantizando que siempre exista al menos un usuario administrador activo.
+
+- **Filtrado por Rol**: La vista incluye funcionalidad de filtrado que permite visualizar usuarios por rol (todos los usuarios, solo administradores, o solo usuarios regulares), facilitando la gestión cuando hay un gran número de usuarios en el sistema.
+
+- **Búsqueda de Usuarios**: Implementa funcionalidad de búsqueda que permite encontrar usuarios específicos por nombre de usuario, mejorando la usabilidad cuando se trabaja con muchos usuarios registrados.
+
+- **Control de Permisos Visual**: La interfaz muestra claramente qué operaciones están disponibles según el rol del usuario actualmente autenticado. Los usuarios regulares pueden visualizar la lista de usuarios pero no pueden realizar operaciones de modificación, mientras que los administradores tienen acceso completo a todas las funcionalidades.
+
+Esta vista es fundamental para el mantenimiento y administración del sistema, proporcionando a los administradores las herramientas necesarias para gestionar eficientemente el acceso al sistema y los permisos de los usuarios. La implementación de esta vista completa el conjunto de funcionalidades administrativas de la aplicación, permitiendo una gestión integral de todos los aspectos del sistema.
+
+![Vista de Gestión de Usuarios](PROYECTO_FINAL_IMAGENES/usuarios_vista.png)
+*Figura: Vista de gestión de usuarios mostrando la tabla con todos los usuarios del sistema y opciones de acción disponibles para administradores*
 
 ### 3.3. Fase 3: Implementación de Concurrencia y Optimización
 
