@@ -39,7 +39,7 @@
 
 <br>
 
-**Repositorio del Proyecto:** [https://github.com/martinPenalva/prueba-PP.git](https://github.com/martinPenalva/prueba-PP.git)
+**Repositorio del Proyecto:** [https://github.com/martinPenalva/ProyectoFinalMartinPenalvaDAM.git](https://github.com/martinPenalva/ProyectoFinalMartinPenalvaDAM.git)
 
 </div>
 
@@ -512,30 +512,38 @@ Para que la aplicación funcione correctamente, es necesario configurar la base 
    - Inserción del usuario administrador por defecto (username: `ADMIN`, contraseña: `ADMINISTRADOR`)
    - Datos de ejemplo para desarrollo y pruebas (opcional)
 
-**Paso 3: Configuración de Variables de Entorno**
+**Paso 3: Configuración de la Conexión a la Base de Datos**
 
-La aplicación utiliza el archivo `.env` para almacenar las credenciales de la base de datos de forma segura. Para configurarlo:
+Para configurar la conexión a la base de datos MySQL, es necesario modificar el archivo `config/config.py`:
 
-1. Crear un archivo llamado `.env` en la raíz del proyecto (al mismo nivel que `config/`)
-2. Agregar las siguientes variables con los valores correspondientes a tu instalación de MySQL:
+1. Abrir el archivo `config/config.py` con un editor de texto
+2. Localizar la sección `DB_CONFIG` (aproximadamente en las líneas 11-20)
+3. Modificar los siguientes valores según tu instalación de MySQL:
 
-```env
-# Configuración de Base de Datos MySQL
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=tu_contraseña_mysql
-DB_NAME=eventos_locales
+```python
+DB_CONFIG = {
+    'host': 'localhost',           # Dirección del servidor MySQL (localhost si está en el mismo ordenador)
+    'port': 3306,                  # Puerto de MySQL (por defecto 3306, o 3309 según tu instalación)
+    'user': 'root',                # Usuario de MySQL
+    'password': 'tu_contraseña',   # Contraseña del usuario MySQL
+    'database': 'eventos_locales',  # Nombre de la base de datos
+    'charset': 'utf8mb4',
+    'collation': 'utf8mb4_unicode_ci',
+    'autocommit': False
+}
 ```
 
-**Valores por defecto (si no se crea el archivo .env):**
-- `DB_HOST`: localhost
-- `DB_PORT`: 3309
-- `DB_USER`: root
-- `DB_PASSWORD`: root
-- `DB_NAME`: eventos_locales
+**Valores por defecto:**
+- `host`: localhost
+- `port`: 3309
+- `user`: root
+- `password`: root
+- `database`: eventos_locales
 
-**Nota importante:** Si tu instalación de MySQL utiliza un puerto diferente al 3306 (por defecto) o 3309, asegúrate de especificarlo en `DB_PORT`. También es recomendable crear un usuario específico para la aplicación en lugar de usar `root` por razones de seguridad.
+**Nota importante:** 
+- Si tu instalación de MySQL utiliza un puerto diferente al 3306 (por defecto) o 3309, asegúrate de especificarlo en `port`
+- Es recomendable crear un usuario específico para la aplicación en lugar de usar `root` por razones de seguridad
+- Reemplaza `'tu_contraseña'` con la contraseña real de tu usuario MySQL
 
 **Paso 4: Ejecución de la Aplicación**
 
@@ -584,7 +592,7 @@ Para usuarios que no tienen Python instalado, se puede crear un ejecutable indep
 2. Si la conexión es exitosa, se mostrará la ventana de login
 3. Si hay un error de conexión, verificar:
    - Que MySQL Server esté ejecutándose
-   - Que las credenciales en el archivo `.env` sean correctas
+   - Que las credenciales en el archivo `config/config.py` sean correctas
    - Que el puerto especificado sea el correcto
    - Que la base de datos `eventos_locales` exista y tenga todas las tablas creadas
    - Que Python esté correctamente instalado y en el PATH del sistema (si se usa Opción 1 o 2)
@@ -594,8 +602,8 @@ Para usuarios que no tienen Python instalado, se puede crear un ejecutable indep
 - Contraseña: `ADMINISTRADOR`
 
 **Recomendaciones de Seguridad:**
-- No compartir el archivo `.env` en repositorios públicos (ya está incluido en `.gitignore`)
-- Usar un usuario MySQL específico para la aplicación con permisos limitados
+- Tener cuidado al compartir el archivo `config/config.py` ya que contiene credenciales de la base de datos
+- Usar un usuario MySQL específico para la aplicación con permisos limitados en lugar de usar `root`
 - Cambiar la contraseña del usuario administrador después del primer acceso
 - Realizar copias de seguridad periódicas de la base de datos
 
@@ -606,7 +614,7 @@ GitHub se ha utilizado como plataforma de control de versiones para almacenar y 
 <img src="PROYECTO_FINAL_IMAGENES/logo_Github.png" alt="Logotipo de GitHub" width="200"/>
 *Figura: Logotipo de GitHub*
 
-**Repositorio del Proyecto:** [https://github.com/martinPenalva/prueba-PP.git](https://github.com/martinPenalva/prueba-PP.git)
+**Repositorio del Proyecto:** [https://github.com/martinPenalva/ProyectoFinalMartinPenalvaDAM.git](https://github.com/martinPenalva/ProyectoFinalMartinPenalvaDAM.git)
 
 **Características principales:**
 - **Control de Versiones:** Utilizamos Git para mantener un historial completo de cambios en el código fuente, lo que nos permite mantener un registro de todas las modificaciones realizadas y colaborar de manera eficiente.
